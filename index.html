@@ -192,52 +192,23 @@
               golden hour seating.
             </p>
           </div>
-          <form
-            class="reservation-form"
-            action="https://formspree.io/f/xwvvpowa"
-            method="POST"
-          >
-            <label>
-              Name
-              <input type="text" name="name" placeholder="Your name" required />
-            </label>
-            <label>
-              Email
-              <input
-                type="email"
-                name="email"
-                placeholder="you@email.com"
-                required
-              />
-            </label>
-            <label>
-              Date
-              <input type="date" name="date" required />
-            </label>
-            <label>
-              Time
-              <input type="time" name="time" required />
-            </label>
-            <label>
-              Guests
-              <input
-                type="number"
-                name="guests"
-                min="1"
-                max="12"
-                placeholder="2"
-                required
-              />
-            </label>
-            <input type="text" name="_gotcha" style="display:none" />
-            <input
-              type="hidden"
-              name="_subject"
-              value="New reservation request - Barolo"
-            />
-            <button class="btn btn-primary" type="submit">Request booking</button>
+          <div class="reservation-form">
+            <div>
+              <p>
+                Use our reservation form to confirm your booking and receive an
+                email confirmation.
+              </p>
+            </div>
+            <a
+              class="btn btn-primary"
+              href="https://forms.gle/7qnT8DaffX45ovC47"
+              target="_blank"
+              rel="noopener"
+            >
+              Open reservation form
+            </a>
             <p class="form-note">Or call +46 8 123 456 for immediate booking.</p>
-          </form>
+          </div>
         </div>
       </section>
 
