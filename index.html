@@ -192,24 +192,50 @@
               golden hour seating.
             </p>
           </div>
-          <form class="reservation-form">
+          <form
+            class="reservation-form"
+            action="https://formspree.io/f/your_form_id"
+            method="POST"
+          >
             <label>
               Name
-              <input type="text" placeholder="Your name" />
+              <input type="text" name="name" placeholder="Your name" required />
+            </label>
+            <label>
+              Email
+              <input
+                type="email"
+                name="email"
+                placeholder="you@email.com"
+                required
+              />
             </label>
             <label>
               Date
-              <input type="date" />
+              <input type="date" name="date" required />
             </label>
             <label>
               Time
-              <input type="time" />
+              <input type="time" name="time" required />
             </label>
             <label>
               Guests
-              <input type="number" min="1" max="12" placeholder="2" />
+              <input
+                type="number"
+                name="guests"
+                min="1"
+                max="12"
+                placeholder="2"
+                required
+              />
             </label>
-            <button class="btn btn-primary" type="button">Request booking</button>
+            <input type="text" name="_gotcha" style="display:none" />
+            <input
+              type="hidden"
+              name="_subject"
+              value="New reservation request - Barolo"
+            />
+            <button class="btn btn-primary" type="submit">Request booking</button>
             <p class="form-note">Or call +46 8 123 456 for immediate booking.</p>
           </form>
         </div>
