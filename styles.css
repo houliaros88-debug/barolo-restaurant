@@ -357,6 +357,19 @@ footer {
   gap: 16px;
 }
 
+.reservation-embed {
+  grid-template-columns: 1fr;
+}
+
+.reservation-embed iframe {
+  width: 100%;
+  min-height: 640px;
+  border: none;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: var(--shadow);
+}
+
 .reservation-form label {
   display: grid;
   gap: 8px;
@@ -533,6 +546,10 @@ footer {
 
   .footer {
     grid-template-columns: 1fr;
+  }
+
+  .reservation-embed iframe {
+    min-height: 720px;
   }
 }
 
