@@ -98,10 +98,14 @@ const refreshSession = async () => {
 };
 
 const getAccessToken = async () => {
+  if (currentSession?.access_token) {
+    return currentSession.access_token;
+  }
   if (!supabaseClient) {
     return null;
   }
   const { data } = await supabaseClient.auth.getSession();
+  currentSession = data.session;
   return data.session?.access_token || null;
 };
 
@@ -184,7 +188,6 @@ const loadBookings = async () => {
   const token = await getAccessToken();
   if (!token) {
     setAuthStatus('Please log in to load bookings.', 'error');
-    toggleAdmin(false);
     return;
   }
 
@@ -218,7 +221,6 @@ const updateBookingStatus = async (id, nextStatus) => {
   const token = await getAccessToken();
   if (!token) {
     setAuthStatus('Please log in to update bookings.', 'error');
-    toggleAdmin(false);
     return;
   }
 
@@ -277,6 +279,7 @@ const login = async () => {
     return;
   }
 
+  toggleAdmin(true);
   await refreshSession();
   setAuthStatus('', '');
   loadBookings();
@@ -320,13 +323,13 @@ if (tableBody) {
 }
 
 supabaseClient = initSupabase();
-  if (supabaseClient) {
-    supabaseClient.auth.onAuthStateChange((_event, session) => {
-      currentSession = session;
-      toggleAdmin(Boolean(session));
-      if (session && !cachedBookings.length) {
-        loadBookings();
-      }
-    });
-    refreshSession();
-  }
+if (supabaseClient) {
+  supabaseClient.auth.onAuthStateChange((_event, session) => {
+    currentSession = session;
+    toggleAdmin(Boolean(session));
+    if (session && !cachedBookings.length) {
+      loadBookings();
+    }
+  });
+  refreshSession();
+}
