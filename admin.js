@@ -130,7 +130,7 @@ const formatDateLabel = (date) => {
   if (!date || Number.isNaN(date.getTime())) {
     return '—';
   }
-  return date.toLocaleDateString(undefined, {
+  return date.toLocaleDateString('el-GR', {
     weekday: 'short',
     day: '2-digit',
     month: 'short',
