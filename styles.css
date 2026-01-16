@@ -69,6 +69,16 @@ footer {
   gap: 24px;
 }
 
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.nav-actions .btn {
+  white-space: nowrap;
+}
+
 .nav-links a {
   text-decoration: none;
   font-size: 13px;
@@ -801,7 +811,7 @@ footer {
   }
 
   .nav {
-    grid-template-columns: auto auto;
+    grid-template-columns: auto auto auto;
     justify-content: space-between;
   }
 
@@ -827,7 +837,7 @@ footer {
     box-shadow: var(--shadow);
   }
 
-  body.nav-open .btn-outline {
+  body.nav-open .nav-actions {
     display: none;
   }
 
