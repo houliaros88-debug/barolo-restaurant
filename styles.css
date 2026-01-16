@@ -495,6 +495,10 @@ footer {
   place-items: center;
 }
 
+.admin-auth[hidden] {
+  display: none;
+}
+
 .admin-card {
   width: min(420px, 100%);
   background: rgba(255, 248, 242, 0.9);
