@@ -715,7 +715,7 @@ footer {
 }
 
 .admin-table-wrap {
-  overflow-x: auto;
+  overflow: visible;
   border-radius: 16px;
   border: 1px solid rgba(47, 34, 29, 0.1);
 }
@@ -723,7 +723,7 @@ footer {
 .admin-table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 760px;
+  table-layout: fixed;
   font-size: 13px;
 }
 
@@ -732,6 +732,7 @@ footer {
   text-align: left;
   padding: 12px 14px;
   border-bottom: 1px solid rgba(47, 34, 29, 0.08);
+  word-break: break-word;
 }
 
 .admin-table th {
