@@ -31,6 +31,7 @@ const formNotes = document.querySelector('#form-notes');
 const openAddButton = document.querySelector('#open-add-reservation');
 const infoModal = document.querySelector('#info-modal');
 const closeInfoButton = document.querySelector('#close-info');
+const editInfoButton = document.querySelector('#edit-info');
 const infoTable = document.querySelector('#info-table');
 const infoEmail = document.querySelector('#info-email');
 const infoPhone = document.querySelector('#info-phone');
@@ -41,6 +42,7 @@ let allBookings = [];
 let visibleBookings = [];
 let editingId = null;
 let currentSession = null;
+let infoBookingId = null;
 
 const setStatus = (message, state) => {
   if (!status) {
@@ -655,6 +657,22 @@ if (closeInfoButton) {
   });
 }
 
+if (editInfoButton) {
+  editInfoButton.addEventListener('click', () => {
+    if (!infoBookingId) {
+      return;
+    }
+    const booking = allBookings.find((item) => String(item.id) === String(infoBookingId));
+    if (booking) {
+      populateForm(booking);
+      if (infoModal) {
+        infoModal.hidden = true;
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  });
+}
+
 if (infoModal) {
   infoModal.addEventListener('click', (event) => {
     if (event.target === infoModal) {
@@ -676,6 +694,8 @@ if (tableBody) {
         if (infoPhone) infoPhone.textContent = booking.phone || '—';
         if (infoNotes) infoNotes.textContent = booking.notes || '—';
         if (infoCreated) infoCreated.textContent = formatDateTime(booking.created_at) || '—';
+        infoBookingId = booking.id;
+        if (editInfoButton) editInfoButton.disabled = false;
         if (infoModal) infoModal.hidden = false;
       } else {
         try {
@@ -685,8 +705,12 @@ if (tableBody) {
           if (infoPhone) infoPhone.textContent = payload.phone || '—';
           if (infoNotes) infoNotes.textContent = payload.notes || '—';
           if (infoCreated) infoCreated.textContent = formatDateTime(payload.created) || '—';
+          infoBookingId = null;
+          if (editInfoButton) editInfoButton.disabled = true;
           if (infoModal) infoModal.hidden = false;
         } catch (error) {
+          infoBookingId = null;
+          if (editInfoButton) editInfoButton.disabled = true;
           if (infoModal) infoModal.hidden = true;
         }
       }

@@ -683,13 +683,19 @@ footer {
 
 .admin-modal-card {
   width: min(640px, 100%);
-  background: rgba(255, 248, 242, 0.9);
+  background: var(--cream);
   border-radius: 18px;
   padding: 20px;
   border: 1px solid rgba(47, 34, 29, 0.08);
   box-shadow: var(--shadow);
   display: grid;
   gap: 12px;
+}
+
+.admin-modal-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .admin-status {
