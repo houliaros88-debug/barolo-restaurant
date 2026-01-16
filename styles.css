@@ -800,6 +800,45 @@ footer {
   cursor: pointer;
 }
 
+.admin-menu {
+  position: relative;
+  display: inline-flex;
+}
+
+.admin-action.menu-toggle {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border-radius: 10px;
+  font-size: 14px;
+  justify-content: center;
+}
+
+.admin-menu-list {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 6px);
+  min-width: 140px;
+  padding: 8px;
+  border-radius: 16px;
+  border: 1px solid rgba(47, 34, 29, 0.12);
+  background: var(--cream);
+  box-shadow: var(--shadow);
+  display: grid;
+  gap: 6px;
+  z-index: 3;
+}
+
+.admin-menu-list .admin-action {
+  width: 100%;
+  justify-content: flex-start;
+  border-radius: 12px;
+}
+
+.admin-menu-list[hidden] {
+  display: none;
+}
+
 .admin-action.confirm {
   background: rgba(139, 154, 122, 0.18);
 }

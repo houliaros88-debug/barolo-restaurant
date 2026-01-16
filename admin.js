@@ -268,6 +268,24 @@ const renderRows = (bookings) => {
   tableBody.innerHTML = bookings
     .map((booking) => {
       const statusValue = normalizeStatus(booking.status);
+      const actionMap = {
+        pending: [
+          { action: 'confirmed', label: 'Confirm', className: 'confirm' },
+          { action: 'cancelled', label: 'Cancel', className: 'cancel' },
+        ],
+        confirmed: [
+          { action: 'seated', label: 'Seated', className: 'seated' },
+          { action: 'no_show', label: 'No show', className: 'no-show' },
+          { action: 'cancelled', label: 'Cancel', className: 'cancel' },
+        ],
+        seated: [
+          { action: 'no_show', label: 'No show', className: 'no-show' },
+          { action: 'cancelled', label: 'Cancel', className: 'cancel' },
+        ],
+        no_show: [{ action: 'cancelled', label: 'Cancel', className: 'cancel' }],
+        cancelled: [],
+      };
+      const actions = actionMap[statusValue] ?? actionMap.pending;
       const infoPayload = escapeHtml(
         JSON.stringify({
           table: booking.table_number ?? null,
@@ -277,6 +295,13 @@ const renderRows = (bookings) => {
           created: booking.created_at,
         })
       );
+      const actionId = escapeHtml(booking.id);
+      const actionButtons = actions
+        .map(
+          (item) =>
+            `<button class="admin-action ${item.className}" data-action="${item.action}" data-id="${actionId}" type="button">${item.label}</button>`
+        )
+        .join('');
       return `
         <tr>
           <td>${escapeHtml(booking.date)}</td>
@@ -288,13 +313,12 @@ const renderRows = (bookings) => {
             <button class="admin-action info" data-info-id="${escapeHtml(booking.id)}" data-info="${infoPayload}" type="button">i</button>
           </td>
           <td>
-            <div class="admin-actions">
-              <button class="admin-action confirm" data-action="confirmed" data-id="${escapeHtml(booking.id)}" type="button">Confirm</button>
-              <button class="admin-action seated" data-action="seated" data-id="${escapeHtml(booking.id)}" type="button">Seated</button>
-              <button class="admin-action no-show" data-action="no_show" data-id="${escapeHtml(booking.id)}" type="button">No show</button>
-              <button class="admin-action pending" data-action="pending" data-id="${escapeHtml(booking.id)}" type="button">Pending</button>
-              <button class="admin-action cancel" data-action="cancelled" data-id="${escapeHtml(booking.id)}" type="button">Cancel</button>
-              <button class="admin-action edit" data-edit="true" data-id="${escapeHtml(booking.id)}" type="button">Edit</button>
+            <div class="admin-menu">
+              <button class="admin-action menu-toggle" data-menu-toggle="${actionId}" aria-expanded="false" aria-controls="menu-${actionId}" type="button">☰</button>
+              <div class="admin-menu-list" id="menu-${actionId}" data-menu-list="${actionId}" hidden>
+                ${actionButtons}
+                <button class="admin-action edit" data-edit="true" data-id="${actionId}" type="button">Edit</button>
+              </div>
             </div>
           </td>
         </tr>
@@ -338,6 +362,16 @@ const downloadCsv = (bookings) => {
   link.click();
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
+};
+
+const closeAllMenus = () => {
+  document.querySelectorAll('.admin-menu-list').forEach((menu) => {
+    menu.hidden = true;
+    const toggle = menu.parentElement?.querySelector('[data-menu-toggle]');
+    if (toggle) {
+      toggle.setAttribute('aria-expanded', 'false');
+    }
+  });
 };
 
 const loadBookings = async () => {
@@ -683,6 +717,19 @@ if (infoModal) {
 
 if (tableBody) {
   tableBody.addEventListener('click', (event) => {
+    const menuToggle = event.target.closest('button[data-menu-toggle]');
+    if (menuToggle) {
+      const menuId = menuToggle.dataset.menuToggle;
+      const menu = tableBody.querySelector(`[data-menu-list="${menuId}"]`);
+      if (!menu) {
+        return;
+      }
+      const isOpen = !menu.hidden;
+      closeAllMenus();
+      menu.hidden = isOpen;
+      menuToggle.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
+      return;
+    }
     const infoButton = event.target.closest('button[data-info-id], button[data-info]');
     if (infoButton) {
       const booking = allBookings.find(
@@ -718,11 +765,13 @@ if (tableBody) {
     }
     const statusButton = event.target.closest('button[data-action][data-id]');
     if (statusButton) {
+      closeAllMenus();
       updateBookingStatus(statusButton.dataset.id, statusButton.dataset.action);
       return;
     }
     const editButton = event.target.closest('button[data-edit][data-id]');
     if (editButton) {
+      closeAllMenus();
       const booking = allBookings.find((item) => item.id === editButton.dataset.id);
       if (booking) {
         populateForm(booking);
@@ -731,6 +780,13 @@ if (tableBody) {
     }
   });
 }
+
+document.addEventListener('click', (event) => {
+  if (event.target.closest('.admin-menu')) {
+    return;
+  }
+  closeAllMenus();
+});
 
 if (filterMode) {
   filterMode.addEventListener('change', applyFilters);
