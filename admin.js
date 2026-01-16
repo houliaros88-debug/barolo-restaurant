@@ -134,7 +134,7 @@ const applyFilters = () => {
   if (mode === 'pending') {
     filtered = filtered.filter((booking) => normalizeStatus(booking.status) === 'pending');
   } else if (mode === 'upcoming') {
-    filtered = filtered.filter((booking) => (booking.date || '') >= today);
+    filtered = filtered.filter((booking) => (booking.date || '') === today);
   } else if (mode === 'past') {
     filtered = filtered.filter((booking) => (booking.date || '') < today);
   } else if (mode === 'date' && selectedDate) {
