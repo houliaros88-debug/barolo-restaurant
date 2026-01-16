@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Barolo | Reservations Admin</title>
+    <meta name="robots" content="noindex" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700&family=Work+Sans:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="admin-page">
+    <div class="page-texture" aria-hidden="true"></div>
+    <header class="hero admin-hero">
+      <nav class="nav">
+        <div class="logo">Barolo</div>
+        <div class="nav-links">
+          <a href="/#reservations">Reservations</a>
+          <a href="/#menu">Menu</a>
+          <a href="/#visit">Visit</a>
+        </div>
+        <a class="btn btn-outline" href="/">Back to site</a>
+      </nav>
+      <div class="admin-header">
+        <p class="section-eyebrow">Admin</p>
+        <h1>Reservation requests</h1>
+        <p class="lead">Use your admin token to load and review new bookings.</p>
+      </div>
+    </header>
+
+    <main>
+      <section class="section admin-panel" data-reveal>
+        <div class="admin-controls">
+          <label class="admin-label">
+            Admin token
+            <input
+              type="password"
+              id="admin-token"
+              placeholder="Paste token"
+              autocomplete="current-password"
+            />
+          </label>
+          <button class="btn btn-primary" id="load-bookings" type="button">Load bookings</button>
+          <button class="btn btn-ghost" id="clear-token" type="button">Clear token</button>
+        </div>
+        <div class="admin-status" id="admin-status" role="status" aria-live="polite"></div>
+        <div class="admin-table-wrap">
+          <table class="admin-table" id="bookings-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Guests</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Notes</th>
+                <th>Created</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td colspan="8" class="admin-empty">No bookings loaded yet.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <script src="admin.js"></script>
+  </body>
+</html>
