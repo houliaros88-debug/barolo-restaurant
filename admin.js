@@ -181,8 +181,7 @@ const updateGreeting = () => {
   const pendingCount = allBookings.filter(
     (booking) => normalizeStatus(booking.status) === 'pending'
   ).length;
-  const label = pendingCount === 1 ? 'booking' : 'bookings';
-  adminGreeting.textContent = `Welcome Barolo team, you have ${pendingCount} new ${label}.`;
+  adminGreeting.textContent = `Welcome Barolo team, you have ${pendingCount} new bookings.`;
 };
 
 const applyFilters = () => {
