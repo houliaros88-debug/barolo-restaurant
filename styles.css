@@ -650,6 +650,48 @@ footer {
   gap: 12px;
 }
 
+.admin-info-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.admin-info-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  opacity: 0.6;
+  margin-bottom: 6px;
+}
+
+.admin-info-value {
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.admin-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(47, 34, 29, 0.35);
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  z-index: 20;
+}
+
+.admin-modal[hidden] {
+  display: none;
+}
+
+.admin-modal-card {
+  width: min(640px, 100%);
+  background: rgba(255, 248, 242, 0.9);
+  border-radius: 18px;
+  padding: 20px;
+  border: 1px solid rgba(47, 34, 29, 0.08);
+  box-shadow: var(--shadow);
+  display: grid;
+  gap: 12px;
+}
+
 .admin-status {
   min-height: 18px;
   font-size: 12px;

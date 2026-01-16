@@ -29,6 +29,13 @@ const formTable = document.querySelector('#form-table');
 const formStatusSelect = document.querySelector('#form-status');
 const formNotes = document.querySelector('#form-notes');
 const openAddButton = document.querySelector('#open-add-reservation');
+const infoModal = document.querySelector('#info-modal');
+const closeInfoButton = document.querySelector('#close-info');
+const infoTable = document.querySelector('#info-table');
+const infoEmail = document.querySelector('#info-email');
+const infoPhone = document.querySelector('#info-phone');
+const infoNotes = document.querySelector('#info-notes');
+const infoCreated = document.querySelector('#info-created');
 
 let allBookings = [];
 let visibleBookings = [];
@@ -276,7 +283,7 @@ const renderRows = (bookings) => {
           <td>${escapeHtml(booking.name)}</td>
           <td><span class="status-pill status-${statusValue}">${escapeHtml(statusValue)}</span></td>
           <td>
-            <button class="admin-action info" data-info="${infoPayload}" type="button">i</button>
+            <button class="admin-action info" data-info-id="${escapeHtml(booking.id)}" data-info="${infoPayload}" type="button">i</button>
           </td>
           <td>
             <div class="admin-actions">
@@ -640,22 +647,48 @@ if (openAddButton) {
   openAddButton.addEventListener('click', openAddReservation);
 }
 
+if (closeInfoButton) {
+  closeInfoButton.addEventListener('click', () => {
+    if (infoModal) {
+      infoModal.hidden = true;
+    }
+  });
+}
+
+if (infoModal) {
+  infoModal.addEventListener('click', (event) => {
+    if (event.target === infoModal) {
+      infoModal.hidden = true;
+    }
+  });
+}
+
 if (tableBody) {
   tableBody.addEventListener('click', (event) => {
-    const infoButton = event.target.closest('button[data-info]');
+    const infoButton = event.target.closest('button[data-info-id], button[data-info]');
     if (infoButton) {
-      try {
-        const payload = JSON.parse(infoButton.dataset.info || '{}');
-        const details = [
-          `Table: ${payload.table ?? '—'}`,
-          `Email: ${payload.email || '—'}`,
-          `Phone: ${payload.phone || '—'}`,
-          `Notes: ${payload.notes || '—'}`,
-          `Created: ${formatDateTime(payload.created) || '—'}`,
-        ].join('\n');
-        window.alert(details);
-      } catch (error) {
-        window.alert('Details unavailable.');
+      const booking = allBookings.find(
+        (item) => String(item.id) === String(infoButton.dataset.infoId || '')
+      );
+      if (booking) {
+        if (infoTable) infoTable.textContent = booking.table_number ?? '—';
+        if (infoEmail) infoEmail.textContent = booking.email || '—';
+        if (infoPhone) infoPhone.textContent = booking.phone || '—';
+        if (infoNotes) infoNotes.textContent = booking.notes || '—';
+        if (infoCreated) infoCreated.textContent = formatDateTime(booking.created_at) || '—';
+        if (infoModal) infoModal.hidden = false;
+      } else {
+        try {
+          const payload = JSON.parse(infoButton.dataset.info || '{}');
+          if (infoTable) infoTable.textContent = payload.table ?? '—';
+          if (infoEmail) infoEmail.textContent = payload.email || '—';
+          if (infoPhone) infoPhone.textContent = payload.phone || '—';
+          if (infoNotes) infoNotes.textContent = payload.notes || '—';
+          if (infoCreated) infoCreated.textContent = formatDateTime(payload.created) || '—';
+          if (infoModal) infoModal.hidden = false;
+        } catch (error) {
+          if (infoModal) infoModal.hidden = true;
+        }
       }
       return;
     }
