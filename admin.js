@@ -1,4 +1,6 @@
 const config = window.BAROLO_SUPABASE || {};
+const STORAGE_KEY = 'barolo-admin-session';
+
 const status = document.querySelector('#admin-status');
 const authStatus = document.querySelector('#admin-auth-status');
 const authSection = document.querySelector('#admin-auth');
@@ -29,7 +31,6 @@ const formNotes = document.querySelector('#form-notes');
 let allBookings = [];
 let visibleBookings = [];
 let editingId = null;
-let supabaseClient = null;
 let currentSession = null;
 
 const setStatus = (message, state) => {
@@ -46,6 +47,14 @@ const setAuthStatus = (message, state) => {
   }
   authStatus.textContent = message;
   authStatus.dataset.state = state || '';
+};
+
+const setFormStatus = (message, state) => {
+  if (!formStatus) {
+    return;
+  }
+  formStatus.textContent = message;
+  formStatus.dataset.state = state || '';
 };
 
 const escapeHtml = (value) =>
@@ -144,46 +153,88 @@ const disableLogin = (message) => {
   }
 };
 
-const initSupabase = () => {
-  if (!window.supabase || !config.url || !config.anonKey) {
-    disableLogin('Login unavailable. Please refresh the page.');
+const authHeaders = () => ({
+  apikey: config.anonKey,
+  Authorization: `Bearer ${config.anonKey}`,
+  'Content-Type': 'application/json',
+});
+
+const saveSession = (session) => {
+  currentSession = session;
+  if (session) {
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(session));
+  } else {
+    sessionStorage.removeItem(STORAGE_KEY);
+  }
+};
+
+const loadSession = () => {
+  const raw = sessionStorage.getItem(STORAGE_KEY);
+  if (!raw) {
     return null;
   }
-  return window.supabase.createClient(config.url, config.anonKey, {
-    auth: {
-      persistSession: true,
-      autoRefreshToken: true,
-      storage: window.sessionStorage,
-      storageKey: 'barolo-admin-session',
-    },
+  try {
+    return JSON.parse(raw);
+  } catch (error) {
+    return null;
+  }
+};
+
+const isSessionValid = (session) => {
+  if (!session?.access_token || !session?.expires_at) {
+    return false;
+  }
+  const now = Math.floor(Date.now() / 1000);
+  return session.expires_at > now + 30;
+};
+
+const requestToken = async (grantType, payload) => {
+  const response = await fetch(`${config.url}/auth/v1/token?grant_type=${grantType}`, {
+    method: 'POST',
+    headers: authHeaders(),
+    body: JSON.stringify(payload),
   });
+  const data = await response.json();
+  return { response, data };
 };
 
 const refreshSession = async () => {
-  if (!supabaseClient) {
-    return;
+  if (!config.url || !config.anonKey) {
+    disableLogin('Login unavailable. Missing configuration.');
+    return null;
   }
-  const { data } = await supabaseClient.auth.getSession();
-  currentSession = data.session;
-  toggleAdmin(Boolean(currentSession));
-  if (currentSession) {
-    setAuthStatus('', '');
-    if (!cachedBookings.length) {
-      loadBookings();
+
+  let session = currentSession || loadSession();
+  if (session && isSessionValid(session)) {
+    currentSession = session;
+    toggleAdmin(true);
+    return session;
+  }
+
+  if (session?.refresh_token) {
+    const { response, data } = await requestToken('refresh_token', {
+      refresh_token: session.refresh_token,
+    });
+    if (response.ok) {
+      const updated = {
+        access_token: data.access_token,
+        refresh_token: data.refresh_token,
+        expires_at: data.expires_at || Math.floor(Date.now() / 1000) + data.expires_in,
+      };
+      saveSession(updated);
+      toggleAdmin(true);
+      return updated;
     }
   }
+
+  saveSession(null);
+  toggleAdmin(false);
+  return null;
 };
 
 const getAccessToken = async () => {
-  if (currentSession?.access_token) {
-    return currentSession.access_token;
-  }
-  if (!supabaseClient) {
-    return null;
-  }
-  const { data } = await supabaseClient.auth.getSession();
-  currentSession = data.session;
-  return data.session?.access_token || null;
+  const session = await refreshSession();
+  return session?.access_token || null;
 };
 
 const renderRows = (bookings) => {
@@ -284,6 +335,11 @@ const loadBookings = async () => {
     const data = await response.json();
     if (!response.ok) {
       const message = data.error || 'Could not load bookings.';
+      if (response.status === 401) {
+        saveSession(null);
+        toggleAdmin(false);
+        throw new Error('Session expired. Please log in again.');
+      }
       if (message === 'Not allowed.') {
         throw new Error('Not authorized. Add your email to ADMIN_EMAILS in Vercel.');
       }
@@ -321,6 +377,11 @@ const updateBookingStatus = async (id, nextStatus) => {
     const data = await response.json();
     if (!response.ok) {
       const message = data.error || 'Could not update booking.';
+      if (response.status === 401) {
+        saveSession(null);
+        toggleAdmin(false);
+        throw new Error('Session expired. Please log in again.');
+      }
       if (message === 'Not allowed.') {
         throw new Error('Not authorized. Add your email to ADMIN_EMAILS in Vercel.');
       }
@@ -341,114 +402,6 @@ const updateBookingStatus = async (id, nextStatus) => {
   } catch (error) {
     setStatus(error.message || 'Could not update booking.', 'error');
   }
-};
-
-const login = async () => {
-  if (!supabaseClient) {
-    disableLogin('Login unavailable. Please refresh the page.');
-    return;
-  }
-  const email = emailInput?.value.trim();
-  const password = passwordInput?.value || '';
-
-  if (!email || !password) {
-    setAuthStatus('Enter email and password.', 'error');
-    return;
-  }
-
-  setAuthStatus('Signing in...', 'loading');
-  const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
-  if (error) {
-    setAuthStatus(error.message || 'Could not sign in.', 'error');
-    return;
-  }
-
-  toggleAdmin(true);
-  await refreshSession();
-  setAuthStatus('', '');
-  loadBookings();
-};
-
-const logout = async () => {
-  if (!supabaseClient) {
-    return;
-  }
-  await supabaseClient.auth.signOut();
-  allBookings = [];
-  visibleBookings = [];
-  renderRows([]);
-  resetForm();
-  setStatus('', '');
-  toggleAdmin(false);
-};
-
-if (loadButton) {
-  loadButton.addEventListener('click', loadBookings);
-}
-
-if (exportButton) {
-  exportButton.addEventListener('click', () => downloadCsv(visibleBookings));
-}
-
-if (logoutButton) {
-  logoutButton.addEventListener('click', logout);
-}
-
-if (loginButton) {
-  loginButton.addEventListener('click', login);
-}
-
-if (tableBody) {
-  tableBody.addEventListener('click', (event) => {
-    const statusButton = event.target.closest('button[data-action][data-id]');
-    if (statusButton) {
-      updateBookingStatus(statusButton.dataset.id, statusButton.dataset.action);
-      return;
-    }
-    const editButton = event.target.closest('button[data-edit][data-id]');
-    if (editButton) {
-      const booking = allBookings.find((item) => item.id === editButton.dataset.id);
-      if (booking) {
-        populateForm(booking);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
-    }
-  });
-}
-
-if (filterMode) {
-  filterMode.addEventListener('change', applyFilters);
-}
-
-if (filterDate) {
-  filterDate.addEventListener('change', applyFilters);
-}
-
-if (saveButton) {
-  saveButton.addEventListener('click', saveReservation);
-}
-
-if (cancelEditButton) {
-  cancelEditButton.addEventListener('click', resetForm);
-}
-
-supabaseClient = initSupabase();
-if (supabaseClient) {
-  supabaseClient.auth.onAuthStateChange((_event, session) => {
-    currentSession = session;
-    toggleAdmin(Boolean(session));
-    if (session && !allBookings.length) {
-      loadBookings();
-    }
-  });
-  refreshSession();
-}
-const setFormStatus = (message, state) => {
-  if (!formStatus) {
-    return;
-  }
-  formStatus.textContent = message;
-  formStatus.dataset.state = state || '';
 };
 
 const resetForm = () => {
@@ -572,3 +525,106 @@ const saveReservation = async () => {
     setFormStatus(error.message || 'Could not save reservation.', 'error');
   }
 };
+
+const login = async () => {
+  if (!config.url || !config.anonKey) {
+    disableLogin('Login unavailable. Missing configuration.');
+    return;
+  }
+  const email = emailInput?.value.trim();
+  const password = passwordInput?.value || '';
+
+  if (!email || !password) {
+    setAuthStatus('Enter email and password.', 'error');
+    return;
+  }
+
+  setAuthStatus('Signing in...', 'loading');
+  const { response, data } = await requestToken('password', { email, password });
+  if (!response.ok) {
+    setAuthStatus(data.error_description || data.error || 'Could not sign in.', 'error');
+    return;
+  }
+
+  const session = {
+    access_token: data.access_token,
+    refresh_token: data.refresh_token,
+    expires_at: data.expires_at || Math.floor(Date.now() / 1000) + data.expires_in,
+  };
+
+  saveSession(session);
+  toggleAdmin(true);
+  setAuthStatus('', '');
+  loadBookings();
+};
+
+const logout = () => {
+  saveSession(null);
+  allBookings = [];
+  visibleBookings = [];
+  renderRows([]);
+  resetForm();
+  setStatus('', '');
+  toggleAdmin(false);
+};
+
+if (loadButton) {
+  loadButton.addEventListener('click', loadBookings);
+}
+
+if (exportButton) {
+  exportButton.addEventListener('click', () => downloadCsv(visibleBookings));
+}
+
+if (logoutButton) {
+  logoutButton.addEventListener('click', logout);
+}
+
+if (loginButton) {
+  loginButton.addEventListener('click', login);
+}
+
+if (tableBody) {
+  tableBody.addEventListener('click', (event) => {
+    const statusButton = event.target.closest('button[data-action][data-id]');
+    if (statusButton) {
+      updateBookingStatus(statusButton.dataset.id, statusButton.dataset.action);
+      return;
+    }
+    const editButton = event.target.closest('button[data-edit][data-id]');
+    if (editButton) {
+      const booking = allBookings.find((item) => item.id === editButton.dataset.id);
+      if (booking) {
+        populateForm(booking);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+  });
+}
+
+if (filterMode) {
+  filterMode.addEventListener('change', applyFilters);
+}
+
+if (filterDate) {
+  filterDate.addEventListener('change', applyFilters);
+}
+
+if (saveButton) {
+  saveButton.addEventListener('click', saveReservation);
+}
+
+if (cancelEditButton) {
+  cancelEditButton.addEventListener('click', resetForm);
+}
+
+if (!config.url || !config.anonKey) {
+  disableLogin('Login unavailable. Missing configuration.');
+} else {
+  refreshSession().then((session) => {
+    if (session) {
+      setAuthStatus('', '');
+      loadBookings();
+    }
+  });
+}
