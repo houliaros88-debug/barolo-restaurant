@@ -124,6 +124,9 @@ const applyFilters = () => {
     if (mode === 'date' && !filterDate.value) {
       filterDate.value = today;
     }
+    if (mode === 'upcoming') {
+      filterDate.value = today;
+    }
   }
 
   let filtered = allBookings;
