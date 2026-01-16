@@ -137,9 +137,16 @@ const toggleAdmin = (isAuthed) => {
   }
 };
 
+const disableLogin = (message) => {
+  setAuthStatus(message, 'error');
+  if (loginButton) {
+    loginButton.disabled = true;
+  }
+};
+
 const initSupabase = () => {
   if (!window.supabase || !config.url || !config.anonKey) {
-    setAuthStatus('Supabase is not configured.', 'error');
+    disableLogin('Login unavailable. Please refresh the page.');
     return null;
   }
   return window.supabase.createClient(config.url, config.anonKey, {
@@ -338,6 +345,7 @@ const updateBookingStatus = async (id, nextStatus) => {
 
 const login = async () => {
   if (!supabaseClient) {
+    disableLogin('Login unavailable. Please refresh the page.');
     return;
   }
   const email = emailInput?.value.trim();
