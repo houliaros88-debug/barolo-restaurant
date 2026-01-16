@@ -14,6 +14,7 @@ const exportButton = document.querySelector('#export-bookings');
 const datePrevButton = document.querySelector('#date-prev');
 const dateNextButton = document.querySelector('#date-next');
 const dateDisplay = document.querySelector('#date-display');
+const datePicker = document.querySelector('#date-picker');
 const tableBody = document.querySelector('#bookings-table tbody');
 const formTitle = document.querySelector('#form-title');
 const cancelEditButton = document.querySelector('#cancel-edit');
@@ -146,6 +147,9 @@ const setSelectedDate = (date) => {
   selectedDate = date;
   if (dateDisplay) {
     dateDisplay.textContent = formatDateLabel(selectedDate);
+  }
+  if (datePicker) {
+    datePicker.value = toDateKey(selectedDate);
   }
 };
 
@@ -820,6 +824,20 @@ if (dateNextButton) {
     next.setDate(next.getDate() + 1);
     setSelectedDate(next);
     applyFilters();
+  });
+}
+
+if (datePicker) {
+  datePicker.addEventListener('change', (event) => {
+    const value = event.target.value;
+    if (!value) {
+      return;
+    }
+    const next = new Date(`${value}T00:00:00`);
+    if (!Number.isNaN(next.getTime())) {
+      setSelectedDate(next);
+      applyFilters();
+    }
   });
 }
 

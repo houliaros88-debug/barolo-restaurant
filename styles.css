@@ -583,6 +583,33 @@ footer {
   letter-spacing: 0.04em;
 }
 
+.admin-date-picker {
+  position: relative;
+  width: 36px;
+  height: 36px;
+}
+
+.admin-date-picker button {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.admin-date-picker svg {
+  width: 18px;
+  height: 18px;
+}
+
+.admin-date-picker input[type="date"] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
 .admin-filters select {
   border-radius: 12px;
   border: 1px solid rgba(47, 34, 29, 0.18);
