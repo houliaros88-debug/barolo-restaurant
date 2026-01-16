@@ -550,6 +550,14 @@ footer {
   margin-bottom: 16px;
 }
 
+.admin-now {
+  margin-left: auto;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
 .admin-controls a.btn {
   text-decoration: none;
 }

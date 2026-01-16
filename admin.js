@@ -11,6 +11,7 @@ const loginButton = document.querySelector('#admin-login');
 const logoutButton = document.querySelector('#admin-logout');
 const loadButton = document.querySelector('#load-bookings');
 const exportButton = document.querySelector('#export-bookings');
+const adminNow = document.querySelector('#admin-now');
 const datePrevButton = document.querySelector('#date-prev');
 const dateNextButton = document.querySelector('#date-next');
 const dateDisplay = document.querySelector('#date-display');
@@ -135,6 +136,21 @@ const formatDateLabel = (date) => {
     day: '2-digit',
     month: 'short',
     year: 'numeric',
+  });
+};
+
+const updateNow = () => {
+  if (!adminNow) {
+    return;
+  }
+  const now = new Date();
+  adminNow.textContent = now.toLocaleString('el-GR', {
+    weekday: 'short',
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
   });
 };
 
@@ -856,6 +872,8 @@ if (!config.url || !config.anonKey) {
   disableLogin('Login unavailable. Missing configuration.');
 } else {
   setSelectedDate(new Date());
+  updateNow();
+  window.setInterval(updateNow, 60000);
   refreshSession().then((session) => {
     if (session) {
       setAuthStatus('', '');
