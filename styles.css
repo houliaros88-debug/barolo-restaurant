@@ -473,26 +473,6 @@ footer {
   padding-bottom: 30px;
 }
 
-.admin-hero .nav {
-  margin-bottom: 24px;
-}
-
-.admin-nav-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.admin-nav-actions .btn {
-  white-space: nowrap;
-}
-
-.admin-nav-stack {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
 .admin-header {
   max-width: 720px;
 }
@@ -568,6 +548,10 @@ footer {
   flex-wrap: wrap;
   align-items: flex-end;
   margin-bottom: 16px;
+}
+
+.admin-controls a.btn {
+  text-decoration: none;
 }
 
 .admin-hint {

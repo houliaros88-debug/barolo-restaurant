@@ -16,21 +16,6 @@
   <body class="admin-page">
     <div class="page-texture" aria-hidden="true"></div>
     <header class="hero admin-hero">
-      <nav class="nav">
-        <div class="logo">Barolo</div>
-        <div class="nav-links">
-          <a href="/#reservations">Reservations</a>
-          <a href="/#menu">Menu</a>
-          <a href="/#visit">Visit</a>
-        </div>
-        <div class="admin-nav-actions">
-          <button class="btn btn-small" id="open-add-reservation" type="button">Add reservation</button>
-          <div class="admin-nav-stack">
-            <button class="btn btn-ghost" id="admin-logout" type="button">Log out</button>
-            <a class="btn btn-outline" href="/">Back to site</a>
-          </div>
-        </div>
-      </nav>
       <div class="admin-header"></div>
     </header>
 
@@ -60,6 +45,9 @@
           <div class="admin-controls">
             <button class="btn btn-primary" id="load-bookings" type="button">New bookings</button>
             <button class="btn btn-small" id="export-bookings" type="button" disabled>Export CSV</button>
+            <button class="btn btn-small" id="open-add-reservation" type="button">Add reservation</button>
+            <button class="btn btn-ghost" id="admin-logout" type="button">Log out</button>
+            <a class="btn btn-outline" href="/">Back to site</a>
           </div>
           <p class="admin-hint">Pending bookings appear first.</p>
           <div class="admin-filters">
