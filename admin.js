@@ -12,6 +12,7 @@ const logoutButton = document.querySelector('#admin-logout');
 const loadButton = document.querySelector('#load-bookings');
 const exportButton = document.querySelector('#export-bookings');
 const adminNow = document.querySelector('#admin-now');
+const adminGreeting = document.querySelector('#admin-greeting');
 const datePrevButton = document.querySelector('#date-prev');
 const dateNextButton = document.querySelector('#date-next');
 const dateDisplay = document.querySelector('#date-display');
@@ -173,6 +174,17 @@ const setSelectedDate = (date) => {
   }
 };
 
+const updateGreeting = () => {
+  if (!adminGreeting) {
+    return;
+  }
+  const pendingCount = allBookings.filter(
+    (booking) => normalizeStatus(booking.status) === 'pending'
+  ).length;
+  const label = pendingCount === 1 ? 'booking' : 'bookings';
+  adminGreeting.textContent = `Welcome Barolo team, you have ${pendingCount} new ${label}.`;
+};
+
 const applyFilters = () => {
   const dateKey = toDateKey(selectedDate);
   const pendingBookings = allBookings.filter(
@@ -182,6 +194,7 @@ const applyFilters = () => {
     (booking) => booking.date === dateKey && normalizeStatus(booking.status) !== 'pending'
   );
 
+  updateGreeting();
   renderRows(sortBookings(pendingBookings), sortBookings(dayBookings));
 };
 
@@ -451,7 +464,7 @@ const loadBookings = async () => {
     }
     allBookings = data.bookings || [];
     applyFilters();
-    setStatus(`Loaded ${data.bookings.length} bookings.`, 'success');
+    setStatus('Bookings updated.', 'success');
   } catch (error) {
     setStatus(error.message || 'Could not load bookings.', 'error');
   }

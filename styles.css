@@ -562,6 +562,14 @@ footer {
   text-decoration: none;
 }
 
+.admin-greeting {
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.7;
+  margin-bottom: 12px;
+}
+
 .admin-hint {
   font-size: 12px;
   opacity: 0.65;
