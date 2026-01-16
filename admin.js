@@ -72,7 +72,14 @@ const initSupabase = () => {
     setAuthStatus('Supabase is not configured.', 'error');
     return null;
   }
-  return window.supabase.createClient(config.url, config.anonKey);
+  return window.supabase.createClient(config.url, config.anonKey, {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      storage: window.sessionStorage,
+      storageKey: 'barolo-admin-session',
+    },
+  });
 };
 
 const refreshSession = async () => {
@@ -82,6 +89,12 @@ const refreshSession = async () => {
   const { data } = await supabaseClient.auth.getSession();
   currentSession = data.session;
   toggleAdmin(Boolean(currentSession));
+  if (currentSession) {
+    setAuthStatus('', '');
+    if (!cachedBookings.length) {
+      loadBookings();
+    }
+  }
 };
 
 const getAccessToken = async () => {
@@ -307,10 +320,13 @@ if (tableBody) {
 }
 
 supabaseClient = initSupabase();
-if (supabaseClient) {
-  supabaseClient.auth.onAuthStateChange((_event, session) => {
-    currentSession = session;
-    toggleAdmin(Boolean(session));
-  });
-  refreshSession();
-}
+  if (supabaseClient) {
+    supabaseClient.auth.onAuthStateChange((_event, session) => {
+      currentSession = session;
+      toggleAdmin(Boolean(session));
+      if (session && !cachedBookings.length) {
+        loadBookings();
+      }
+    });
+    refreshSession();
+  }
