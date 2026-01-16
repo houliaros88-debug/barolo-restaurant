@@ -252,25 +252,32 @@ const renderRows = (bookings) => {
   visibleBookings = bookings;
 
   if (!bookings.length) {
-    tableBody.innerHTML = '<tr><td colspan="11" class="admin-empty">No bookings found.</td></tr>';
+    tableBody.innerHTML = '<tr><td colspan="7" class="admin-empty">No bookings found.</td></tr>';
     return;
   }
 
   tableBody.innerHTML = bookings
     .map((booking) => {
       const statusValue = normalizeStatus(booking.status);
+      const infoPayload = escapeHtml(
+        JSON.stringify({
+          table: booking.table_number ?? null,
+          email: booking.email,
+          phone: booking.phone,
+          notes: booking.notes || '',
+          created: booking.created_at,
+        })
+      );
       return `
         <tr>
           <td>${escapeHtml(booking.date)}</td>
           <td>${escapeHtml(booking.time)}</td>
           <td>${escapeHtml(booking.guests)}</td>
-          <td>${escapeHtml(booking.table_number ?? '')}</td>
           <td>${escapeHtml(booking.name)}</td>
-          <td>${escapeHtml(booking.email)}</td>
-          <td>${escapeHtml(booking.phone)}</td>
-          <td>${escapeHtml(booking.notes || '')}</td>
           <td><span class="status-pill status-${statusValue}">${escapeHtml(statusValue)}</span></td>
-          <td>${escapeHtml(formatDateTime(booking.created_at))}</td>
+          <td>
+            <button class="admin-action info" data-info="${infoPayload}" type="button">i</button>
+          </td>
           <td>
             <div class="admin-actions">
               <button class="admin-action confirm" data-action="confirmed" data-id="${escapeHtml(booking.id)}" type="button">Confirm</button>
@@ -635,6 +642,23 @@ if (openAddButton) {
 
 if (tableBody) {
   tableBody.addEventListener('click', (event) => {
+    const infoButton = event.target.closest('button[data-info]');
+    if (infoButton) {
+      try {
+        const payload = JSON.parse(infoButton.dataset.info || '{}');
+        const details = [
+          `Table: ${payload.table ?? '—'}`,
+          `Email: ${payload.email || '—'}`,
+          `Phone: ${payload.phone || '—'}`,
+          `Notes: ${payload.notes || '—'}`,
+          `Created: ${formatDateTime(payload.created) || '—'}`,
+        ].join('\n');
+        window.alert(details);
+      } catch (error) {
+        window.alert('Details unavailable.');
+      }
+      return;
+    }
     const statusButton = event.target.closest('button[data-action][data-id]');
     if (statusButton) {
       updateBookingStatus(statusButton.dataset.id, statusButton.dataset.action);

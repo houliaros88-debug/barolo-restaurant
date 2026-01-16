@@ -756,6 +756,10 @@ footer {
   background: rgba(139, 154, 122, 0.18);
 }
 
+.admin-action.pending {
+  background: rgba(215, 164, 124, 0.18);
+}
+
 .admin-action.cancel {
   background: rgba(162, 58, 44, 0.12);
   border-color: rgba(162, 58, 44, 0.4);
@@ -764,6 +768,17 @@ footer {
 
 .admin-action.edit {
   background: rgba(255, 248, 242, 0.8);
+}
+
+.admin-action.info {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
 }
 
 .admin-action.seated {
