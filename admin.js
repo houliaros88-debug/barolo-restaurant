@@ -27,6 +27,7 @@ const formGuests = document.querySelector('#form-guests');
 const formTable = document.querySelector('#form-table');
 const formStatusSelect = document.querySelector('#form-status');
 const formNotes = document.querySelector('#form-notes');
+const openAddButton = document.querySelector('#open-add-reservation');
 
 let allBookings = [];
 let visibleBookings = [];
@@ -568,6 +569,24 @@ const logout = () => {
   toggleAdmin(false);
 };
 
+const openAddReservation = async () => {
+  const token = await getAccessToken();
+  if (!token) {
+    toggleAdmin(false);
+    setAuthStatus('Please log in to add a reservation.', 'error');
+    authSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    return;
+  }
+
+  resetForm();
+  const formEl = document.querySelector('.admin-form');
+  if (formEl) {
+    formEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    formEl.classList.add('highlight');
+    window.setTimeout(() => formEl.classList.remove('highlight'), 1200);
+  }
+};
+
 if (loadButton) {
   loadButton.addEventListener('click', loadBookings);
 }
@@ -582,6 +601,10 @@ if (logoutButton) {
 
 if (loginButton) {
   loginButton.addEventListener('click', login);
+}
+
+if (openAddButton) {
+  openAddButton.addEventListener('click', openAddReservation);
 }
 
 if (tableBody) {

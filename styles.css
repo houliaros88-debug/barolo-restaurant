@@ -477,6 +477,16 @@ footer {
   margin-bottom: 24px;
 }
 
+.admin-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.admin-nav-actions .btn {
+  white-space: nowrap;
+}
+
 .admin-header {
   max-width: 720px;
 }
@@ -616,6 +626,10 @@ footer {
   border: 1px solid rgba(47, 34, 29, 0.08);
   display: grid;
   gap: 12px;
+}
+
+.admin-form.highlight {
+  box-shadow: 0 0 0 2px rgba(215, 164, 124, 0.6);
 }
 
 .admin-form-header {
