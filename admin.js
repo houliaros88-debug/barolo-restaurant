@@ -18,6 +18,7 @@ const formTitle = document.querySelector('#form-title');
 const cancelEditButton = document.querySelector('#cancel-edit');
 const saveButton = document.querySelector('#save-reservation');
 const formStatus = document.querySelector('#form-status-message');
+const formContainer = document.querySelector('#admin-form');
 const formName = document.querySelector('#form-name');
 const formEmail = document.querySelector('#form-email');
 const formPhone = document.querySelector('#form-phone');
@@ -428,8 +429,21 @@ const resetForm = () => {
   setFormStatus('', '');
 };
 
+const showForm = () => {
+  if (formContainer) {
+    formContainer.hidden = false;
+  }
+};
+
+const hideForm = () => {
+  if (formContainer) {
+    formContainer.hidden = true;
+  }
+};
+
 const populateForm = (booking) => {
   editingId = booking.id;
+  showForm();
   if (formTitle) {
     formTitle.textContent = 'Edit reservation';
   }
@@ -520,8 +534,9 @@ const saveReservation = async () => {
       allBookings = [booking, ...allBookings];
     }
     applyFilters();
-    resetForm();
-    setFormStatus('Saved.', 'success');
+  resetForm();
+  hideForm();
+  setFormStatus('Saved.', 'success');
   } catch (error) {
     setFormStatus(error.message || 'Could not save reservation.', 'error');
   }
@@ -565,6 +580,7 @@ const logout = () => {
   visibleBookings = [];
   renderRows([]);
   resetForm();
+  hideForm();
   setStatus('', '');
   toggleAdmin(false);
 };
@@ -579,11 +595,11 @@ const openAddReservation = async () => {
   }
 
   resetForm();
-  const formEl = document.querySelector('.admin-form');
-  if (formEl) {
-    formEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    formEl.classList.add('highlight');
-    window.setTimeout(() => formEl.classList.remove('highlight'), 1200);
+  showForm();
+  if (formContainer) {
+    formContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    formContainer.classList.add('highlight');
+    window.setTimeout(() => formContainer.classList.remove('highlight'), 1200);
   }
 };
 
@@ -638,7 +654,10 @@ if (saveButton) {
 }
 
 if (cancelEditButton) {
-  cancelEditButton.addEventListener('click', resetForm);
+  cancelEditButton.addEventListener('click', () => {
+    resetForm();
+    hideForm();
+  });
 }
 
 if (!config.url || !config.anonKey) {
@@ -648,6 +667,7 @@ if (!config.url || !config.anonKey) {
     if (session) {
       setAuthStatus('', '');
       loadBookings();
+      hideForm();
     }
   });
 }

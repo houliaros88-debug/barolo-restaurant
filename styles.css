@@ -628,6 +628,10 @@ footer {
   gap: 12px;
 }
 
+.admin-form[hidden] {
+  display: none;
+}
+
 .admin-form.highlight {
   box-shadow: 0 0 0 2px rgba(215, 164, 124, 0.6);
 }
