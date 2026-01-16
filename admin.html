@@ -45,6 +45,7 @@
             />
           </label>
           <button class="btn btn-primary" id="load-bookings" type="button">Load bookings</button>
+          <button class="btn btn-small" id="export-bookings" type="button" disabled>Export CSV</button>
           <button class="btn btn-ghost" id="clear-token" type="button">Clear token</button>
         </div>
         <div class="admin-status" id="admin-status" role="status" aria-live="polite"></div>
@@ -59,12 +60,14 @@
                 <th>Email</th>
                 <th>Phone</th>
                 <th>Notes</th>
+                <th>Status</th>
                 <th>Created</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td colspan="8" class="admin-empty">No bookings loaded yet.</td>
+                <td colspan="10" class="admin-empty">No bookings loaded yet.</td>
               </tr>
             </tbody>
           </table>

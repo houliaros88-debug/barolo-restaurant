@@ -140,6 +140,11 @@ footer {
   color: var(--ink);
 }
 
+.btn[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .hero-grid {
   display: grid;
   grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
@@ -558,6 +563,61 @@ footer {
   text-align: center;
   padding: 24px;
   opacity: 0.6;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  background: rgba(47, 34, 29, 0.08);
+  color: var(--ink);
+}
+
+.status-pill.status-pending {
+  background: rgba(215, 164, 124, 0.25);
+}
+
+.status-pill.status-confirmed {
+  background: rgba(139, 154, 122, 0.25);
+}
+
+.status-pill.status-cancelled {
+  background: rgba(162, 58, 44, 0.18);
+  color: #a23a2c;
+}
+
+.admin-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.admin-action {
+  font-size: 10px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(47, 34, 29, 0.2);
+  background: #fff;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.admin-action.confirm {
+  background: rgba(139, 154, 122, 0.18);
+}
+
+.admin-action.pending {
+  background: rgba(215, 164, 124, 0.18);
+}
+
+.admin-action.cancel {
+  background: rgba(162, 58, 44, 0.12);
+  border-color: rgba(162, 58, 44, 0.4);
+  color: #a23a2c;
 }
 
 .footer {

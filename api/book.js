@@ -139,6 +139,7 @@ module.exports = async (req, res) => {
     time: trimmedTime,
     guests: Math.round(guestsNumber),
     notes: trimmedNotes ? trimmedNotes : null,
+    status: 'pending',
   };
 
   const supabaseResponse = await fetch(`${SUPABASE_URL}/rest/v1/bookings`, {
