@@ -568,6 +568,21 @@ footer {
   margin-bottom: 12px;
 }
 
+.admin-date-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(47, 34, 29, 0.18);
+  background: #fff;
+}
+
+.admin-date-display {
+  font-size: 13px;
+  letter-spacing: 0.04em;
+}
+
 .admin-filters select {
   border-radius: 12px;
   border: 1px solid rgba(47, 34, 29, 0.18);
@@ -750,6 +765,12 @@ footer {
   text-align: center;
   padding: 24px;
   opacity: 0.6;
+}
+
+.admin-divider {
+  padding: 0;
+  border-bottom: 1px solid rgba(47, 34, 29, 0.12);
+  height: 0;
 }
 
 .status-pill {

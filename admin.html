@@ -51,20 +51,11 @@
           </div>
           <p class="admin-hint">Pending bookings appear first.</p>
           <div class="admin-filters">
-            <label class="admin-label">
-              View
-              <select id="filter-mode">
-                <option value="pending">Pending</option>
-                <option value="upcoming">Upcoming</option>
-                <option value="past">Past</option>
-                <option value="all">All</option>
-                <option value="date">Specific date</option>
-              </select>
-            </label>
-            <label class="admin-label">
-              Date
-              <input type="date" id="filter-date" />
-            </label>
+            <div class="admin-date-nav">
+              <button class="btn btn-ghost" id="date-prev" type="button" aria-label="Previous day">←</button>
+              <span class="admin-date-display" id="date-display">—</span>
+              <button class="btn btn-ghost" id="date-next" type="button" aria-label="Next day">→</button>
+            </div>
           </div>
           <div class="admin-status" id="admin-status" role="status" aria-live="polite"></div>
           <div class="admin-form" id="admin-form" hidden>

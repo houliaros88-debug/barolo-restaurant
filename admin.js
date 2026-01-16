@@ -11,8 +11,9 @@ const loginButton = document.querySelector('#admin-login');
 const logoutButton = document.querySelector('#admin-logout');
 const loadButton = document.querySelector('#load-bookings');
 const exportButton = document.querySelector('#export-bookings');
-const filterMode = document.querySelector('#filter-mode');
-const filterDate = document.querySelector('#filter-date');
+const datePrevButton = document.querySelector('#date-prev');
+const dateNextButton = document.querySelector('#date-next');
+const dateDisplay = document.querySelector('#date-display');
 const tableBody = document.querySelector('#bookings-table tbody');
 const formTitle = document.querySelector('#form-title');
 const cancelEditButton = document.querySelector('#cancel-edit');
@@ -43,6 +44,7 @@ let visibleBookings = [];
 let editingId = null;
 let currentSession = null;
 let infoBookingId = null;
+let selectedDate = new Date();
 
 const setStatus = (message, state) => {
   if (!status) {
@@ -123,34 +125,40 @@ const sortBookings = (bookings) => {
   });
 };
 
+const formatDateLabel = (date) => {
+  if (!date || Number.isNaN(date.getTime())) {
+    return '—';
+  }
+  return date.toLocaleDateString(undefined, {
+    weekday: 'short',
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+  });
+};
+
+const toDateKey = (date) => {
+  const local = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+  return local.toISOString().slice(0, 10);
+};
+
+const setSelectedDate = (date) => {
+  selectedDate = date;
+  if (dateDisplay) {
+    dateDisplay.textContent = formatDateLabel(selectedDate);
+  }
+};
+
 const applyFilters = () => {
-  const mode = filterMode?.value || 'upcoming';
-  const selectedDate = filterDate?.value;
-  const today = new Date().toISOString().slice(0, 10);
+  const dateKey = toDateKey(selectedDate);
+  const pendingBookings = allBookings.filter(
+    (booking) => normalizeStatus(booking.status) === 'pending'
+  );
+  const dayBookings = allBookings.filter(
+    (booking) => booking.date === dateKey && normalizeStatus(booking.status) !== 'pending'
+  );
 
-  if (filterDate) {
-    filterDate.disabled = mode !== 'date';
-    if (mode === 'date' && !filterDate.value) {
-      filterDate.value = today;
-    }
-    if (mode === 'upcoming' || mode === 'pending') {
-      filterDate.value = today;
-    }
-  }
-
-  let filtered = allBookings;
-
-  if (mode === 'pending') {
-    filtered = filtered.filter((booking) => normalizeStatus(booking.status) === 'pending');
-  } else if (mode === 'upcoming') {
-    filtered = filtered.filter((booking) => (booking.date || '') === today);
-  } else if (mode === 'past') {
-    filtered = filtered.filter((booking) => (booking.date || '') < today);
-  } else if (mode === 'date' && selectedDate) {
-    filtered = filtered.filter((booking) => booking.date === selectedDate);
-  }
-
-  renderRows(sortBookings(filtered));
+  renderRows(sortBookings(pendingBookings), sortBookings(dayBookings));
 };
 
 const toggleAdmin = (isAuthed) => {
@@ -253,81 +261,93 @@ const getAccessToken = async () => {
   return session?.access_token || null;
 };
 
-const renderRows = (bookings) => {
+const renderBookingRow = (booking) => {
+  const statusValue = normalizeStatus(booking.status);
+  const actionMap = {
+    pending: [
+      { action: 'confirmed', label: 'Confirm', className: 'confirm' },
+      { action: 'cancelled', label: 'Cancel', className: 'cancel' },
+    ],
+    confirmed: [
+      { action: 'seated', label: 'Seated', className: 'seated' },
+      { action: 'no_show', label: 'No show', className: 'no-show' },
+      { action: 'cancelled', label: 'Cancel', className: 'cancel' },
+    ],
+    seated: [
+      { action: 'no_show', label: 'No show', className: 'no-show' },
+      { action: 'cancelled', label: 'Cancel', className: 'cancel' },
+    ],
+    no_show: [{ action: 'cancelled', label: 'Cancel', className: 'cancel' }],
+    cancelled: [],
+  };
+  const actions = actionMap[statusValue] ?? actionMap.pending;
+  const infoPayload = escapeHtml(
+    JSON.stringify({
+      table: booking.table_number ?? null,
+      email: booking.email,
+      phone: booking.phone,
+      notes: booking.notes || '',
+      created: booking.created_at,
+    })
+  );
+  const actionId = escapeHtml(booking.id);
+  const actionButtons = actions
+    .map(
+      (item) =>
+        `<button class="admin-action ${item.className}" data-action="${item.action}" data-id="${actionId}" type="button">${item.label}</button>`
+    )
+    .join('');
+
+  return `
+    <tr>
+      <td>${escapeHtml(booking.date)}</td>
+      <td>${escapeHtml(booking.time)}</td>
+      <td>${escapeHtml(booking.guests)}</td>
+      <td>${escapeHtml(booking.name)}</td>
+      <td><span class="status-pill status-${statusValue}">${escapeHtml(statusValue)}</span></td>
+      <td>
+        <button class="admin-action info" data-info-id="${escapeHtml(booking.id)}" data-info="${infoPayload}" type="button">i</button>
+      </td>
+      <td>
+        <div class="admin-menu">
+          <button class="admin-action menu-toggle" data-menu-toggle="${actionId}" aria-expanded="false" aria-controls="menu-${actionId}" type="button">☰</button>
+          <div class="admin-menu-list" id="menu-${actionId}" data-menu-list="${actionId}" hidden>
+            ${actionButtons}
+            <button class="admin-action edit" data-edit="true" data-id="${actionId}" type="button">Edit</button>
+          </div>
+        </div>
+      </td>
+    </tr>
+  `;
+};
+
+const renderRows = (pendingBookings, dayBookings) => {
   if (!tableBody) {
     return;
   }
 
-  visibleBookings = bookings;
+  const combinedBookings = [...pendingBookings, ...dayBookings];
+  visibleBookings = combinedBookings;
 
-  if (!bookings.length) {
+  if (!combinedBookings.length) {
     tableBody.innerHTML = '<tr><td colspan="7" class="admin-empty">No bookings found.</td></tr>';
     return;
   }
 
-  tableBody.innerHTML = bookings
-    .map((booking) => {
-      const statusValue = normalizeStatus(booking.status);
-      const actionMap = {
-        pending: [
-          { action: 'confirmed', label: 'Confirm', className: 'confirm' },
-          { action: 'cancelled', label: 'Cancel', className: 'cancel' },
-        ],
-        confirmed: [
-          { action: 'seated', label: 'Seated', className: 'seated' },
-          { action: 'no_show', label: 'No show', className: 'no-show' },
-          { action: 'cancelled', label: 'Cancel', className: 'cancel' },
-        ],
-        seated: [
-          { action: 'no_show', label: 'No show', className: 'no-show' },
-          { action: 'cancelled', label: 'Cancel', className: 'cancel' },
-        ],
-        no_show: [{ action: 'cancelled', label: 'Cancel', className: 'cancel' }],
-        cancelled: [],
-      };
-      const actions = actionMap[statusValue] ?? actionMap.pending;
-      const infoPayload = escapeHtml(
-        JSON.stringify({
-          table: booking.table_number ?? null,
-          email: booking.email,
-          phone: booking.phone,
-          notes: booking.notes || '',
-          created: booking.created_at,
-        })
-      );
-      const actionId = escapeHtml(booking.id);
-      const actionButtons = actions
-        .map(
-          (item) =>
-            `<button class="admin-action ${item.className}" data-action="${item.action}" data-id="${actionId}" type="button">${item.label}</button>`
-        )
-        .join('');
-      return `
-        <tr>
-          <td>${escapeHtml(booking.date)}</td>
-          <td>${escapeHtml(booking.time)}</td>
-          <td>${escapeHtml(booking.guests)}</td>
-          <td>${escapeHtml(booking.name)}</td>
-          <td><span class="status-pill status-${statusValue}">${escapeHtml(statusValue)}</span></td>
-          <td>
-            <button class="admin-action info" data-info-id="${escapeHtml(booking.id)}" data-info="${infoPayload}" type="button">i</button>
-          </td>
-          <td>
-            <div class="admin-menu">
-              <button class="admin-action menu-toggle" data-menu-toggle="${actionId}" aria-expanded="false" aria-controls="menu-${actionId}" type="button">☰</button>
-              <div class="admin-menu-list" id="menu-${actionId}" data-menu-list="${actionId}" hidden>
-                ${actionButtons}
-                <button class="admin-action edit" data-edit="true" data-id="${actionId}" type="button">Edit</button>
-              </div>
-            </div>
-          </td>
-        </tr>
-      `;
-    })
-    .join('');
+  const rows = [
+    ...pendingBookings.map(renderBookingRow),
+  ];
+
+  if (pendingBookings.length && dayBookings.length) {
+    rows.push('<tr><td colspan="7" class="admin-divider"></td></tr>');
+  }
+
+  rows.push(...dayBookings.map(renderBookingRow));
+
+  tableBody.innerHTML = rows.join('');
 
   if (exportButton) {
-    exportButton.disabled = bookings.length === 0;
+    exportButton.disabled = combinedBookings.length === 0;
   }
 };
 
@@ -633,7 +653,7 @@ const logout = () => {
   saveSession(null);
   allBookings = [];
   visibleBookings = [];
-  renderRows([]);
+  renderRows([], []);
   resetForm();
   hideForm();
   setStatus('', '');
@@ -660,9 +680,6 @@ const openAddReservation = async () => {
 
 if (loadButton) {
   loadButton.addEventListener('click', () => {
-    if (filterMode) {
-      filterMode.value = 'pending';
-    }
     loadBookings();
   });
 }
@@ -788,12 +805,22 @@ document.addEventListener('click', (event) => {
   closeAllMenus();
 });
 
-if (filterMode) {
-  filterMode.addEventListener('change', applyFilters);
+if (datePrevButton) {
+  datePrevButton.addEventListener('click', () => {
+    const next = new Date(selectedDate);
+    next.setDate(next.getDate() - 1);
+    setSelectedDate(next);
+    applyFilters();
+  });
 }
 
-if (filterDate) {
-  filterDate.addEventListener('change', applyFilters);
+if (dateNextButton) {
+  dateNextButton.addEventListener('click', () => {
+    const next = new Date(selectedDate);
+    next.setDate(next.getDate() + 1);
+    setSelectedDate(next);
+    applyFilters();
+  });
 }
 
 if (saveButton) {
@@ -810,6 +837,7 @@ if (cancelEditButton) {
 if (!config.url || !config.anonKey) {
   disableLogin('Login unavailable. Missing configuration.');
 } else {
+  setSelectedDate(new Date());
   refreshSession().then((session) => {
     if (session) {
       setAuthStatus('', '');
