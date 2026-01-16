@@ -593,14 +593,15 @@ footer {
   width: 100%;
   height: 100%;
   border-radius: 50%;
+  padding: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
 }
 
 .admin-date-picker svg {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
 }
 
 .admin-date-picker input[type="date"] {
