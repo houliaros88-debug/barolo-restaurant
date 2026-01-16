@@ -487,6 +487,12 @@ footer {
   white-space: nowrap;
 }
 
+.admin-nav-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
 .admin-header {
   max-width: 720px;
 }
