@@ -128,7 +128,9 @@ const applyFilters = () => {
 
   let filtered = allBookings;
 
-  if (mode === 'upcoming') {
+  if (mode === 'pending') {
+    filtered = filtered.filter((booking) => normalizeStatus(booking.status) === 'pending');
+  } else if (mode === 'upcoming') {
     filtered = filtered.filter((booking) => (booking.date || '') >= today);
   } else if (mode === 'past') {
     filtered = filtered.filter((booking) => (booking.date || '') < today);
@@ -604,7 +606,12 @@ const openAddReservation = async () => {
 };
 
 if (loadButton) {
-  loadButton.addEventListener('click', loadBookings);
+  loadButton.addEventListener('click', () => {
+    if (filterMode) {
+      filterMode.value = 'pending';
+    }
+    loadBookings();
+  });
 }
 
 if (exportButton) {
