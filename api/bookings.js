@@ -4,6 +4,14 @@ const sendJson = (res, status, payload) => {
   res.end(JSON.stringify(payload));
 };
 
+const escapeHtml = (value) =>
+  String(value || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+
 const parseBody = async (req) => {
   if (req.body) {
     if (typeof req.body === 'string') {
@@ -31,6 +39,28 @@ const parseBody = async (req) => {
   }
 };
 
+const sendResendEmail = async ({ from, to, subject, html, text, apiKey }) => {
+  const response = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      from,
+      to: Array.isArray(to) ? to : [to],
+      subject,
+      html,
+      text,
+    }),
+  });
+
+  if (!response.ok) {
+    const message = await response.text();
+    throw new Error(message || 'Failed to send email.');
+  }
+};
+
 module.exports = async (req, res) => {
   if (req.method !== 'GET' && req.method !== 'PATCH') {
     sendJson(res, 405, { error: 'Method not allowed.' });
@@ -41,6 +71,8 @@ module.exports = async (req, res) => {
     SUPABASE_URL,
     SUPABASE_SERVICE_ROLE_KEY,
     ADMIN_TOKEN,
+    RESEND_API_KEY,
+    RESERVATION_FROM_EMAIL,
   } = process.env;
 
   if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY || !ADMIN_TOKEN) {
@@ -114,5 +146,45 @@ module.exports = async (req, res) => {
   }
 
   const updated = await response.json();
-  sendJson(res, 200, { booking: updated[0] });
+  const booking = updated[0];
+  let emailError = null;
+
+  if (statusValue === 'confirmed' && booking?.email) {
+    if (!RESEND_API_KEY || !RESERVATION_FROM_EMAIL) {
+      emailError = 'Email service not configured.';
+    } else {
+      const detailsHtml = `
+        <ul>
+          <li><strong>Name:</strong> ${escapeHtml(booking.name)}</li>
+          <li><strong>Date:</strong> ${escapeHtml(booking.date)}</li>
+          <li><strong>Time:</strong> ${escapeHtml(booking.time)}</li>
+          <li><strong>Guests:</strong> ${escapeHtml(booking.guests)}</li>
+        </ul>
+      `;
+      const detailsText = [
+        `Name: ${booking.name}`,
+        `Date: ${booking.date}`,
+        `Time: ${booking.time}`,
+        `Guests: ${booking.guests}`,
+      ].join('\n');
+
+      try {
+        await sendResendEmail({
+          from: RESERVATION_FROM_EMAIL,
+          to: booking.email,
+          subject: 'Your reservation is confirmed',
+          html: `
+            <p>Your reservation at Barolo is confirmed. We look forward to welcoming you.</p>
+            ${detailsHtml}
+          `,
+          text: `Your reservation at Barolo is confirmed.\n\n${detailsText}`,
+          apiKey: RESEND_API_KEY,
+        });
+      } catch (error) {
+        emailError = 'Confirmation email failed to send.';
+      }
+    }
+  }
+
+  sendJson(res, 200, { booking, emailError });
 };

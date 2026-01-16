@@ -170,7 +170,11 @@ const updateBookingStatus = async (id, nextStatus) => {
       booking.id === id ? { ...booking, status: data.booking.status } : booking
     );
     renderRows(cachedBookings);
-    setStatus('Status updated.', 'success');
+    if (data.emailError) {
+      setStatus(`Status updated. ${data.emailError}`, 'error');
+    } else {
+      setStatus('Status updated.', 'success');
+    }
   } catch (error) {
     setStatus(error.message || 'Could not update booking.', 'error');
   }
