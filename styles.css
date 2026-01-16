@@ -554,6 +554,23 @@ footer {
   margin-bottom: 16px;
 }
 
+.admin-filters {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  margin-bottom: 12px;
+}
+
+.admin-filters select {
+  border-radius: 12px;
+  border: 1px solid rgba(47, 34, 29, 0.18);
+  padding: 10px 12px;
+  font-size: 14px;
+  background: #fff;
+  width: 100%;
+}
+
 .admin-label {
   display: grid;
   gap: 8px;
@@ -570,6 +587,53 @@ footer {
   font-size: 14px;
   background: #fff;
   width: 100%;
+}
+
+.admin-label select,
+.admin-label textarea {
+  border-radius: 12px;
+  border: 1px solid rgba(47, 34, 29, 0.18);
+  padding: 10px 12px;
+  font-size: 14px;
+  background: #fff;
+  width: 100%;
+}
+
+.admin-label textarea {
+  resize: vertical;
+  min-height: 90px;
+}
+
+.admin-label-full {
+  grid-column: 1 / -1;
+}
+
+.admin-form {
+  margin: 16px 0 24px;
+  padding: 20px;
+  border-radius: 18px;
+  background: rgba(255, 248, 242, 0.9);
+  border: 1px solid rgba(47, 34, 29, 0.08);
+  display: grid;
+  gap: 12px;
+}
+
+.admin-form-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.admin-form-header h3 {
+  font-family: var(--font-serif);
+  font-size: 20px;
+}
+
+.admin-form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
 }
 
 .admin-status {
@@ -650,6 +714,14 @@ footer {
   color: #a23a2c;
 }
 
+.status-pill.status-seated {
+  background: rgba(47, 34, 29, 0.2);
+}
+
+.status-pill.status-no_show {
+  background: rgba(82, 82, 82, 0.25);
+}
+
 .admin-actions {
   display: flex;
   gap: 6px;
@@ -670,14 +742,22 @@ footer {
   background: rgba(139, 154, 122, 0.18);
 }
 
-.admin-action.pending {
-  background: rgba(215, 164, 124, 0.18);
-}
-
 .admin-action.cancel {
   background: rgba(162, 58, 44, 0.12);
   border-color: rgba(162, 58, 44, 0.4);
   color: #a23a2c;
+}
+
+.admin-action.edit {
+  background: rgba(255, 248, 242, 0.8);
+}
+
+.admin-action.seated {
+  background: rgba(47, 34, 29, 0.15);
+}
+
+.admin-action.no-show {
+  background: rgba(82, 82, 82, 0.15);
 }
 
 .footer {
@@ -769,6 +849,10 @@ footer {
     margin: 0 6vw;
   }
 
+  .admin-form-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .cancel-panel {
     margin: 0 6vw;
   }
@@ -813,6 +897,10 @@ footer {
   .admin-controls {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .admin-form-grid {
+    grid-template-columns: 1fr;
   }
 
   .cancel-panel {

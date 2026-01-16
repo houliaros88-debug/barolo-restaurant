@@ -1,3 +1,5 @@
+const crypto = require('crypto');
+
 const sendJson = (res, status, payload) => {
   res.statusCode = status;
   res.setHeader('Content-Type', 'application/json');
@@ -62,7 +64,7 @@ const sendResendEmail = async ({ from, to, subject, html, text, apiKey }) => {
 };
 
 module.exports = async (req, res) => {
-  if (req.method !== 'GET' && req.method !== 'PATCH') {
+  if (req.method !== 'GET' && req.method !== 'PATCH' && req.method !== 'POST') {
     sendJson(res, 405, { error: 'Method not allowed.' });
     return;
   }
@@ -141,14 +143,126 @@ module.exports = async (req, res) => {
   }
 
   const body = await parseBody(req);
-  const id = String(body?.id || '').trim();
-  const statusValue = String(body?.status || '').trim().toLowerCase();
-  const allowedStatuses = ['pending', 'confirmed', 'cancelled'];
+  const allowedStatuses = ['pending', 'confirmed', 'cancelled', 'seated', 'no_show'];
 
-  if (!id || !allowedStatuses.includes(statusValue)) {
-    sendJson(res, 400, { error: 'Invalid booking update.' });
+  if (req.method === 'POST') {
+    const name = String(body?.name || '').trim();
+    const email = String(body?.email || '').trim();
+    const phone = String(body?.phone || '').trim();
+    const date = String(body?.date || '').trim();
+    const time = String(body?.time || '').trim();
+    const guests = Number(body?.guests || 0);
+    const notes = String(body?.notes || '').trim() || null;
+    const statusValue = String(body?.status || 'pending').trim().toLowerCase();
+    const tableRaw = body?.table_number;
+    const tableNumber =
+      tableRaw === null || tableRaw === undefined || tableRaw === ''
+        ? null
+        : Number(tableRaw);
+
+    if (!name || !email || !phone || !date || !time) {
+      sendJson(res, 400, { error: 'Missing booking details.' });
+      return;
+    }
+
+    if (!Number.isFinite(guests) || guests < 1) {
+      sendJson(res, 400, { error: 'Guests must be at least 1.' });
+      return;
+    }
+
+    if (!allowedStatuses.includes(statusValue)) {
+      sendJson(res, 400, { error: 'Invalid status.' });
+      return;
+    }
+
+    if (tableNumber !== null && Number.isNaN(tableNumber)) {
+      sendJson(res, 400, { error: 'Table must be a number.' });
+      return;
+    }
+
+    const cancelToken = body?.cancel_token || crypto.randomBytes(16).toString('hex');
+    const payload = {
+      name,
+      email,
+      phone,
+      date,
+      time,
+      guests,
+      notes,
+      status: statusValue,
+      table_number: tableNumber,
+      cancel_token: cancelToken,
+    };
+
+    const createResponse = await fetch(`${SUPABASE_URL}/rest/v1/bookings`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        apikey: SUPABASE_SERVICE_ROLE_KEY,
+        Authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+        Prefer: 'return=representation',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!createResponse.ok) {
+      const message = await createResponse.text();
+      sendJson(res, 500, { error: message || 'Failed to create booking.' });
+      return;
+    }
+
+    const created = await createResponse.json();
+    sendJson(res, 200, { booking: created[0] });
     return;
   }
+
+  const id = String(body?.id || '').trim();
+  if (!id) {
+    sendJson(res, 400, { error: 'Missing booking id.' });
+    return;
+  }
+
+  const updatePayload = {};
+  if (body?.name !== undefined) updatePayload.name = String(body.name || '').trim();
+  if (body?.email !== undefined) updatePayload.email = String(body.email || '').trim();
+  if (body?.phone !== undefined) updatePayload.phone = String(body.phone || '').trim();
+  if (body?.date !== undefined) updatePayload.date = String(body.date || '').trim();
+  if (body?.time !== undefined) updatePayload.time = String(body.time || '').trim();
+  if (body?.guests !== undefined) {
+    const guests = Number(body.guests || 0);
+    if (!Number.isFinite(guests) || guests < 1) {
+      sendJson(res, 400, { error: 'Guests must be at least 1.' });
+      return;
+    }
+    updatePayload.guests = guests;
+  }
+  if (body?.notes !== undefined) updatePayload.notes = body.notes ? String(body.notes).trim() : null;
+  if (body?.table_number !== undefined) {
+    const tableRaw = body.table_number;
+    const tableNumber =
+      tableRaw === null || tableRaw === undefined || tableRaw === ''
+        ? null
+        : Number(tableRaw);
+    if (tableNumber !== null && Number.isNaN(tableNumber)) {
+      sendJson(res, 400, { error: 'Table must be a number.' });
+      return;
+    }
+    updatePayload.table_number = tableNumber;
+  }
+
+  if (body?.status !== undefined) {
+    const statusValue = String(body.status || '').trim().toLowerCase();
+    if (!allowedStatuses.includes(statusValue)) {
+      sendJson(res, 400, { error: 'Invalid status.' });
+      return;
+    }
+    updatePayload.status = statusValue;
+    if (statusValue === 'cancelled') {
+      updatePayload.cancelled_at = new Date().toISOString();
+    }
+  }
+
+  updatePayload.updated_at = new Date().toISOString();
 
   const url = new URL(`${SUPABASE_URL}/rest/v1/bookings`);
   url.searchParams.set('id', `eq.${id}`);
@@ -161,10 +275,7 @@ module.exports = async (req, res) => {
       Authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
       Prefer: 'return=representation',
     },
-    body: JSON.stringify({
-      status: statusValue,
-      updated_at: new Date().toISOString(),
-    }),
+    body: JSON.stringify(updatePayload),
   });
 
   if (!response.ok) {
