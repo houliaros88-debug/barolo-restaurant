@@ -144,14 +144,18 @@ const updateNow = () => {
     return;
   }
   const now = new Date();
-  adminNow.textContent = now.toLocaleString('el-GR', {
+  const datePart = now.toLocaleDateString('el-GR', {
     weekday: 'short',
     day: '2-digit',
     month: 'short',
     year: 'numeric',
+  });
+  const timePart = now.toLocaleTimeString('el-GR', {
     hour: '2-digit',
     minute: '2-digit',
+    hour12: false,
   });
+  adminNow.textContent = `${datePart} • ${timePart}`;
 };
 
 const toDateKey = (date) => {
