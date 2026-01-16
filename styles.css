@@ -469,6 +469,10 @@ footer {
   padding-bottom: 30px;
 }
 
+.cancel-page .hero {
+  padding-bottom: 30px;
+}
+
 .admin-hero .nav {
   margin-bottom: 24px;
 }
@@ -484,6 +488,38 @@ footer {
   margin: 0 6vw;
   box-shadow: var(--shadow);
   border: 1px solid rgba(47, 34, 29, 0.08);
+}
+
+.cancel-panel {
+  background: var(--cream);
+  border-radius: var(--radius);
+  padding: 32px;
+  margin: 0 6vw;
+  box-shadow: var(--shadow);
+  border: 1px solid rgba(47, 34, 29, 0.08);
+  max-width: 720px;
+}
+
+.cancel-note {
+  margin-bottom: 16px;
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+.cancel-status {
+  margin-top: 14px;
+  min-height: 18px;
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+.cancel-status[data-state="error"] {
+  color: #a23a2c;
+}
+
+.cancel-status[data-state="success"] {
+  color: var(--ink);
+  font-weight: 600;
 }
 
 .admin-controls {
@@ -708,6 +744,10 @@ footer {
   .admin-panel {
     margin: 0 6vw;
   }
+
+  .cancel-panel {
+    margin: 0 6vw;
+  }
 }
 
 @media (max-width: 640px) {
@@ -749,6 +789,11 @@ footer {
   .admin-controls {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .cancel-panel {
+    padding: 24px;
+    margin: 0 5vw;
   }
 
 }

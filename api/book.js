@@ -1,3 +1,5 @@
+const crypto = require('crypto');
+
 const escapeHtml = (value) =>
   String(value || '')
     .replace(/&/g, '&amp;')
@@ -131,6 +133,7 @@ module.exports = async (req, res) => {
     return;
   }
 
+  const cancelToken = crypto.randomBytes(16).toString('hex');
   const bookingPayload = {
     name: trimmedName,
     email: trimmedEmail,
@@ -140,6 +143,7 @@ module.exports = async (req, res) => {
     guests: Math.round(guestsNumber),
     notes: trimmedNotes ? trimmedNotes : null,
     status: 'pending',
+    cancel_token: cancelToken,
   };
 
   const supabaseResponse = await fetch(`${SUPABASE_URL}/rest/v1/bookings`, {
@@ -160,6 +164,16 @@ module.exports = async (req, res) => {
     });
     return;
   }
+
+  const insertedBookings = await supabaseResponse.json();
+  const insertedBooking = insertedBookings?.[0];
+  const resolvedCancelToken = insertedBooking?.cancel_token || cancelToken;
+  const proto = req.headers['x-forwarded-proto'] || 'https';
+  const host = req.headers['x-forwarded-host'] || req.headers.host;
+  const baseUrl = host ? `${proto}://${host}` : '';
+  const cancelUrl = baseUrl
+    ? `${baseUrl}/cancel.html?token=${encodeURIComponent(resolvedCancelToken)}`
+    : '';
 
   const subjectDate = `${trimmedDate} at ${trimmedTime}`;
   const detailsHtml = `
@@ -196,16 +210,22 @@ module.exports = async (req, res) => {
       apiKey: RESEND_API_KEY,
     });
 
+    const customerHtml = `
+      <p>Thank you for your request at Barolo.</p>
+      <p>We will confirm your reservation shortly.</p>
+      ${detailsHtml}
+      ${cancelUrl ? `<p>If you need to cancel, use this link: <a href="${cancelUrl}">${cancelUrl}</a></p>` : ''}
+    `;
+    const customerText = `Thank you for your request at Barolo.\nWe will confirm your reservation shortly.\n\n${detailsText}${
+      cancelUrl ? `\n\nCancel link: ${cancelUrl}` : ''
+    }`;
+
     await sendResendEmail({
       from: RESERVATION_FROM_EMAIL,
       to: trimmedEmail,
       subject: `We received your reservation request - ${subjectDate}`,
-      html: `
-        <p>Thank you for your request at Barolo.</p>
-        <p>We will confirm your reservation shortly.</p>
-        ${detailsHtml}
-      `,
-      text: `Thank you for your request at Barolo.\nWe will confirm your reservation shortly.\n\n${detailsText}`,
+      html: customerHtml,
+      text: customerText,
       apiKey: RESEND_API_KEY,
     });
   } catch (error) {

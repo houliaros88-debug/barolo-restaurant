@@ -149,10 +149,17 @@ module.exports = async (req, res) => {
   const booking = updated[0];
   let emailError = null;
 
-  if (statusValue === 'confirmed' && booking?.email) {
+  if ((statusValue === 'confirmed' || statusValue === 'cancelled') && booking?.email) {
     if (!RESEND_API_KEY || !RESERVATION_FROM_EMAIL) {
       emailError = 'Email service not configured.';
     } else {
+      const proto = req.headers['x-forwarded-proto'] || 'https';
+      const host = req.headers['x-forwarded-host'] || req.headers.host;
+      const baseUrl = host ? `${proto}://${host}` : '';
+      const cancelUrl =
+        statusValue === 'confirmed' && booking.cancel_token && baseUrl
+          ? `${baseUrl}/cancel.html?token=${encodeURIComponent(booking.cancel_token)}`
+          : '';
       const detailsHtml = `
         <ul>
           <li><strong>Name:</strong> ${escapeHtml(booking.name)}</li>
@@ -168,20 +175,38 @@ module.exports = async (req, res) => {
         `Guests: ${booking.guests}`,
       ].join('\n');
 
+      const subject =
+        statusValue === 'confirmed'
+          ? 'Your reservation is confirmed'
+          : 'Your reservation has been cancelled';
+      const intro =
+        statusValue === 'confirmed'
+          ? 'Your reservation at Barolo is confirmed. We look forward to welcoming you.'
+          : 'Your reservation at Barolo has been cancelled. If this is a mistake, please contact us.';
+      const cancelLine =
+        statusValue === 'confirmed' && cancelUrl
+          ? `<p>If you need to cancel, use this link: <a href="${cancelUrl}">${cancelUrl}</a></p>`
+          : '';
+      const cancelText =
+        statusValue === 'confirmed' && cancelUrl
+          ? `\n\nCancel link: ${cancelUrl}`
+          : '';
+
       try {
         await sendResendEmail({
           from: RESERVATION_FROM_EMAIL,
           to: booking.email,
-          subject: 'Your reservation is confirmed',
+          subject,
           html: `
-            <p>Your reservation at Barolo is confirmed. We look forward to welcoming you.</p>
+            <p>${escapeHtml(intro)}</p>
             ${detailsHtml}
+            ${cancelLine}
           `,
-          text: `Your reservation at Barolo is confirmed.\n\n${detailsText}`,
+          text: `${intro}\n\n${detailsText}${cancelText}`,
           apiKey: RESEND_API_KEY,
         });
       } catch (error) {
-        emailError = 'Confirmation email failed to send.';
+        emailError = `${statusValue === 'confirmed' ? 'Confirmation' : 'Cancellation'} email failed to send.`;
       }
     }
   }

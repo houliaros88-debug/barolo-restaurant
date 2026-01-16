@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Barolo | Cancel Reservation</title>
+    <meta name="robots" content="noindex" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700&family=Work+Sans:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="cancel-page">
+    <div class="page-texture" aria-hidden="true"></div>
+    <header class="hero admin-hero">
+      <nav class="nav">
+        <div class="logo">Barolo</div>
+        <div class="nav-links">
+          <a href="/#reservations">Reservations</a>
+          <a href="/#menu">Menu</a>
+          <a href="/#visit">Visit</a>
+        </div>
+        <a class="btn btn-outline" href="/">Back to site</a>
+      </nav>
+      <div class="admin-header">
+        <p class="section-eyebrow">Reservations</p>
+        <h1>Cancel reservation</h1>
+        <p class="lead">Confirm below to cancel your booking.</p>
+      </div>
+    </header>
+
+    <main>
+      <section class="section cancel-panel">
+        <p class="cancel-note">
+          Your reservation will be cancelled immediately and you will receive a confirmation email.
+        </p>
+        <button class="btn btn-primary" id="confirm-cancel" type="button">Cancel reservation</button>
+        <div class="cancel-status" id="cancel-status" role="status" aria-live="polite"></div>
+      </section>
+    </main>
+
+    <script src="cancel.js"></script>
+  </body>
+</html>
