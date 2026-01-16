@@ -564,6 +564,12 @@ footer {
   margin-bottom: 16px;
 }
 
+.admin-hint {
+  font-size: 12px;
+  opacity: 0.65;
+  margin-bottom: 12px;
+}
+
 .admin-filters {
   display: flex;
   gap: 16px;
