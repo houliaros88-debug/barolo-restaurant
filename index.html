@@ -192,24 +192,40 @@
               golden hour seating.
             </p>
           </div>
-          <div class="reservation-form reservation-embed">
-            <iframe
-              title="Barolo Reservation Form"
-              src="https://docs.google.com/forms/d/e/1FAIpQLSdHuX0VzAWYDZaEnhvuSuptqwrJyALyc0u-b9Q6aT4ItJRcxQ/viewform?embedded=true"
-              loading="lazy"
-            ></iframe>
-            <p class="form-note">
-              If the form does not load, open it
-              <a
-                href="https://forms.gle/7qnT8DaffX45ovC47"
-                target="_blank"
-                rel="noopener"
-              >
-                here
-              </a>
-              .
-            </p>
-          </div>
+          <form class="reservation-form" id="reservation-form">
+            <label>
+              Name
+              <input type="text" name="name" placeholder="Your name" required />
+            </label>
+            <label>
+              Email
+              <input type="email" name="email" placeholder="you@email.com" required />
+            </label>
+            <label>
+              Phone (with country code)
+              <input type="tel" name="phone" placeholder="+30 690 000 0000" required />
+            </label>
+            <label>
+              Date
+              <input type="date" name="date" required />
+            </label>
+            <label>
+              Time
+              <input type="time" name="time" required />
+            </label>
+            <label>
+              Guests
+              <input type="number" name="guests" min="1" max="12" placeholder="2" required />
+            </label>
+            <label class="full">
+              Special requests (optional)
+              <textarea name="notes" rows="3" placeholder="Allergies, celebrations, seating preferences"></textarea>
+            </label>
+            <input type="text" name="website" class="hidden-field" tabindex="-1" autocomplete="off" />
+            <button class="btn btn-primary full" type="submit">Request booking</button>
+            <p class="form-note">We will confirm your reservation by email.</p>
+            <div class="form-status" role="status" aria-live="polite"></div>
+          </form>
         </div>
       </section>
 
