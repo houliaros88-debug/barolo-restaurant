@@ -124,7 +124,7 @@ const applyFilters = () => {
     if (mode === 'date' && !filterDate.value) {
       filterDate.value = today;
     }
-    if (mode === 'upcoming') {
+    if (mode === 'upcoming' || mode === 'pending') {
       filterDate.value = today;
     }
   }
