@@ -587,7 +587,7 @@ footer {
   position: relative;
   width: 36px;
   height: 36px;
-  transform: translateY(-4px);
+  transform: translateY(-6px);
 }
 
 .admin-date-picker button {
