@@ -70,20 +70,48 @@ module.exports = async (req, res) => {
   const {
     SUPABASE_URL,
     SUPABASE_SERVICE_ROLE_KEY,
-    ADMIN_TOKEN,
+    ADMIN_EMAILS,
     RESEND_API_KEY,
     RESERVATION_FROM_EMAIL,
   } = process.env;
 
-  if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY || !ADMIN_TOKEN) {
+  if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY || !ADMIN_EMAILS) {
     sendJson(res, 500, { error: 'Server not configured.' });
     return;
   }
 
   const authHeader = req.headers.authorization || '';
-  const token = authHeader.replace('Bearer', '').trim();
-  if (!token || token !== ADMIN_TOKEN) {
+  const token = authHeader.replace(/Bearer\s+/i, '').trim();
+  if (!token) {
     sendJson(res, 401, { error: 'Unauthorized.' });
+    return;
+  }
+
+  const allowedEmails = ADMIN_EMAILS.split(',')
+    .map((email) => email.trim().toLowerCase())
+    .filter(Boolean);
+
+  if (!allowedEmails.length) {
+    sendJson(res, 500, { error: 'Admin access not configured.' });
+    return;
+  }
+
+  const userResponse = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      apikey: SUPABASE_SERVICE_ROLE_KEY,
+    },
+  });
+
+  if (!userResponse.ok) {
+    sendJson(res, 401, { error: 'Unauthorized.' });
+    return;
+  }
+
+  const user = await userResponse.json();
+  const userEmail = String(user?.email || '').toLowerCase();
+  if (!allowedEmails.includes(userEmail)) {
+    sendJson(res, 401, { error: 'Not allowed.' });
     return;
   }
 

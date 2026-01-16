@@ -490,6 +490,26 @@ footer {
   border: 1px solid rgba(47, 34, 29, 0.08);
 }
 
+.admin-auth {
+  display: grid;
+  place-items: center;
+}
+
+.admin-card {
+  width: min(420px, 100%);
+  background: rgba(255, 248, 242, 0.9);
+  border-radius: 20px;
+  padding: 24px;
+  border: 1px solid rgba(47, 34, 29, 0.12);
+  box-shadow: var(--shadow);
+  display: grid;
+  gap: 12px;
+}
+
+.admin-content[hidden] {
+  display: none;
+}
+
 .cancel-panel {
   background: var(--cream);
   border-radius: var(--radius);

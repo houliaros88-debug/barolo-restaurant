@@ -1,11 +1,19 @@
-const tokenInput = document.querySelector('#admin-token');
+const config = window.BAROLO_SUPABASE || {};
 const status = document.querySelector('#admin-status');
+const authStatus = document.querySelector('#admin-auth-status');
+const authSection = document.querySelector('#admin-auth');
+const contentSection = document.querySelector('#admin-content');
+const emailInput = document.querySelector('#admin-email');
+const passwordInput = document.querySelector('#admin-password');
+const loginButton = document.querySelector('#admin-login');
+const logoutButton = document.querySelector('#admin-logout');
 const loadButton = document.querySelector('#load-bookings');
 const exportButton = document.querySelector('#export-bookings');
-const clearButton = document.querySelector('#clear-token');
 const tableBody = document.querySelector('#bookings-table tbody');
 
 let cachedBookings = [];
+let supabaseClient = null;
+let currentSession = null;
 
 const setStatus = (message, state) => {
   if (!status) {
@@ -13,6 +21,14 @@ const setStatus = (message, state) => {
   }
   status.textContent = message;
   status.dataset.state = state || '';
+};
+
+const setAuthStatus = (message, state) => {
+  if (!authStatus) {
+    return;
+  }
+  authStatus.textContent = message;
+  authStatus.dataset.state = state || '';
 };
 
 const escapeHtml = (value) =>
@@ -40,6 +56,40 @@ const normalizeStatus = (value) => {
     return statusValue;
   }
   return 'pending';
+};
+
+const toggleAdmin = (isAuthed) => {
+  if (authSection) {
+    authSection.hidden = isAuthed;
+  }
+  if (contentSection) {
+    contentSection.hidden = !isAuthed;
+  }
+};
+
+const initSupabase = () => {
+  if (!window.supabase || !config.url || !config.anonKey) {
+    setAuthStatus('Supabase is not configured.', 'error');
+    return null;
+  }
+  return window.supabase.createClient(config.url, config.anonKey);
+};
+
+const refreshSession = async () => {
+  if (!supabaseClient) {
+    return;
+  }
+  const { data } = await supabaseClient.auth.getSession();
+  currentSession = data.session;
+  toggleAdmin(Boolean(currentSession));
+};
+
+const getAccessToken = async () => {
+  if (!supabaseClient) {
+    return null;
+  }
+  const { data } = await supabaseClient.auth.getSession();
+  return data.session?.access_token || null;
 };
 
 const renderRows = (bookings) => {
@@ -118,13 +168,13 @@ const downloadCsv = (bookings) => {
 };
 
 const loadBookings = async () => {
-  const token = tokenInput?.value.trim();
+  const token = await getAccessToken();
   if (!token) {
-    setStatus('Enter the admin token to load bookings.', 'error');
+    setAuthStatus('Please log in to load bookings.', 'error');
+    toggleAdmin(false);
     return;
   }
 
-  localStorage.setItem('baroloAdminToken', token);
   setStatus('Loading reservations...', 'loading');
 
   try {
@@ -135,7 +185,14 @@ const loadBookings = async () => {
     });
     const data = await response.json();
     if (!response.ok) {
-      throw new Error(data.error || 'Could not load bookings.');
+      const message = data.error || 'Could not load bookings.';
+      if (message === 'Not allowed.') {
+        throw new Error('Not authorized. Add your email to ADMIN_EMAILS in Vercel.');
+      }
+      if (message === 'Admin access not configured.') {
+        throw new Error('Admin access not configured. Set ADMIN_EMAILS in Vercel.');
+      }
+      throw new Error(message);
     }
     renderRows(data.bookings || []);
     setStatus(`Loaded ${data.bookings.length} bookings.`, 'success');
@@ -145,9 +202,10 @@ const loadBookings = async () => {
 };
 
 const updateBookingStatus = async (id, nextStatus) => {
-  const token = tokenInput?.value.trim();
+  const token = await getAccessToken();
   if (!token) {
-    setStatus('Enter the admin token to update bookings.', 'error');
+    setAuthStatus('Please log in to update bookings.', 'error');
+    toggleAdmin(false);
     return;
   }
 
@@ -164,7 +222,14 @@ const updateBookingStatus = async (id, nextStatus) => {
     });
     const data = await response.json();
     if (!response.ok) {
-      throw new Error(data.error || 'Could not update booking.');
+      const message = data.error || 'Could not update booking.';
+      if (message === 'Not allowed.') {
+        throw new Error('Not authorized. Add your email to ADMIN_EMAILS in Vercel.');
+      }
+      if (message === 'Admin access not configured.') {
+        throw new Error('Admin access not configured. Set ADMIN_EMAILS in Vercel.');
+      }
+      throw new Error(message);
     }
     cachedBookings = cachedBookings.map((booking) =>
       booking.id === id ? { ...booking, status: data.booking.status } : booking
@@ -180,6 +245,41 @@ const updateBookingStatus = async (id, nextStatus) => {
   }
 };
 
+const login = async () => {
+  if (!supabaseClient) {
+    return;
+  }
+  const email = emailInput?.value.trim();
+  const password = passwordInput?.value || '';
+
+  if (!email || !password) {
+    setAuthStatus('Enter email and password.', 'error');
+    return;
+  }
+
+  setAuthStatus('Signing in...', 'loading');
+  const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+  if (error) {
+    setAuthStatus(error.message || 'Could not sign in.', 'error');
+    return;
+  }
+
+  await refreshSession();
+  setAuthStatus('', '');
+  loadBookings();
+};
+
+const logout = async () => {
+  if (!supabaseClient) {
+    return;
+  }
+  await supabaseClient.auth.signOut();
+  cachedBookings = [];
+  renderRows([]);
+  setStatus('', '');
+  toggleAdmin(false);
+};
+
 if (loadButton) {
   loadButton.addEventListener('click', loadBookings);
 }
@@ -188,18 +288,12 @@ if (exportButton) {
   exportButton.addEventListener('click', () => downloadCsv(cachedBookings));
 }
 
-if (clearButton) {
-  clearButton.addEventListener('click', () => {
-    localStorage.removeItem('baroloAdminToken');
-    if (tokenInput) {
-      tokenInput.value = '';
-    }
-    cachedBookings = [];
-    if (exportButton) {
-      exportButton.disabled = true;
-    }
-    setStatus('Token cleared.', '');
-  });
+if (logoutButton) {
+  logoutButton.addEventListener('click', logout);
+}
+
+if (loginButton) {
+  loginButton.addEventListener('click', login);
 }
 
 if (tableBody) {
@@ -212,7 +306,11 @@ if (tableBody) {
   });
 }
 
-const savedToken = localStorage.getItem('baroloAdminToken');
-if (savedToken && tokenInput) {
-  tokenInput.value = savedToken;
+supabaseClient = initSupabase();
+if (supabaseClient) {
+  supabaseClient.auth.onAuthStateChange((_event, session) => {
+    currentSession = session;
+    toggleAdmin(Boolean(session));
+  });
+  refreshSession();
 }
