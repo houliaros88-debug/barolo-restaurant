@@ -55,6 +55,7 @@
             <div>
               <span>Open</span>
               <strong>Every day except Tuesday 17:00 - 01:00</strong>
+              <span class="field-note">Kitchen until 23:00</span>
             </div>
             <div>
               <span>Address</span>
@@ -190,7 +191,8 @@
             <p class="section-eyebrow">Reservations</p>
             <h2>Reserve your table</h2>
             <p>
-              We are open every day except Tuesday from 17:00 until 01:00. Walk-ins are
+              We are open every day except Tuesday from 17:00 until 01:00, with the kitchen
+              serving until 23:00. Walk-ins are
               welcome, but weekend tables go fast. Reserve early for golden hour seating.
             </p>
           </div>
@@ -213,8 +215,8 @@
             </label>
             <label>
               Time
-              <input type="time" name="time" required />
-              <span class="field-note">17:00 - 01:00 (closed Tuesday)</span>
+              <input type="time" name="time" min="17:00" max="23:00" required />
+              <span class="field-note">17:00 - 23:00 (closed Tuesday)</span>
             </label>
             <label>
               Guests
@@ -242,8 +244,12 @@
             </p>
             <div class="visit-details">
               <div>
-                <span>Hours</span>
+                <span>Open</span>
                 <strong>17:00 - 01:00</strong>
+              </div>
+              <div>
+                <span>Kitchen</span>
+                <strong>17:00 - 23:00</strong>
               </div>
               <div>
                 <span>Closed</span>

@@ -78,10 +78,10 @@ if (reservationForm) {
     const hours = Number(timeMatch[1]);
     const minutes = Number(timeMatch[2]);
     const totalMinutes = hours * 60 + minutes;
-    const isAllowedTime = totalMinutes >= 17 * 60 || totalMinutes <= 60;
+    const isAllowedTime = totalMinutes >= 17 * 60 && totalMinutes <= 23 * 60;
 
     if (!isAllowedTime) {
-      setStatus('Reservations are available between 17:00 and 01:00.', 'error');
+      setStatus('Reservations are available between 17:00 and 23:00.', 'error');
       return;
     }
 
@@ -89,9 +89,6 @@ if (reservationForm) {
       const [year, month, day] = payload.date.split('-').map(Number);
       if (year && month && day) {
         const serviceDate = new Date(year, month - 1, day);
-        if (totalMinutes <= 60) {
-          serviceDate.setDate(serviceDate.getDate() - 1);
-        }
         if (serviceDate.getDay() === 2) {
           setStatus('We are closed on Tuesdays. Please choose another day.', 'error');
           return;
