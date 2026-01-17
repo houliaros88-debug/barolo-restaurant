@@ -7,6 +7,7 @@
   --cream: #ffffff;
   --shadow: 0 24px 60px rgba(55, 34, 28, 0.18);
   --radius: 26px;
+  --page-pad: clamp(16px, 5vw, 72px);
   --font-serif: "Fraunces", "Times New Roman", serif;
   --font-sans: "Work Sans", "Helvetica Neue", sans-serif;
 }
@@ -230,6 +231,11 @@ body.nav-open .nav-links {
   margin-bottom: 16px;
 }
 
+.hero-content {
+  padding-left: var(--page-pad);
+  padding-right: var(--page-pad);
+}
+
 .eyebrow {
   text-transform: uppercase;
   letter-spacing: 0.2em;
@@ -325,6 +331,8 @@ body.nav-open .nav-links {
   gap: 24px;
   align-items: flex-end;
   margin-bottom: 28px;
+  padding-left: var(--page-pad);
+  padding-right: var(--page-pad);
 }
 
 .section h2 {
@@ -380,6 +388,11 @@ body.nav-open .nav-links {
   list-style: none;
 }
 
+.story-content {
+  padding-left: var(--page-pad);
+  padding-right: var(--page-pad);
+}
+
 .story-content li::before {
   content: "+";
   margin-right: 8px;
@@ -422,6 +435,7 @@ body.nav-open .nav-links {
   gap: 20px;
   align-items: center;
   border: 1px solid rgba(47, 34, 29, 0.1);
+  padding: 32px var(--page-pad);
 }
 
 .reservations {
@@ -431,7 +445,7 @@ body.nav-open .nav-links {
 .reservation-card {
   background: var(--cream);
   border-radius: var(--radius);
-  padding: 32px;
+  padding: 32px var(--page-pad);
   display: grid;
   gap: 24px;
   box-shadow: var(--shadow);
@@ -525,7 +539,7 @@ body.nav-open .nav-links {
   gap: 24px;
   background: var(--cream);
   border-radius: var(--radius);
-  padding: 32px;
+  padding: 32px var(--page-pad);
   box-shadow: var(--shadow);
   border: 1px solid rgba(47, 34, 29, 0.08);
 }
@@ -1061,7 +1075,7 @@ body.nav-open .nav-links {
 }
 
 .footer {
-  padding: 40px 0 60px;
+  padding: 40px var(--page-pad) 60px;
   background: #ffffff;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
