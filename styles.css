@@ -101,6 +101,10 @@ footer {
   margin-left: var(--page-pad);
 }
 
+.hero-banner-overlay .nav-toggle {
+  margin-right: var(--page-pad);
+}
+
 .nav {
   position: relative;
   margin-bottom: 24px;
