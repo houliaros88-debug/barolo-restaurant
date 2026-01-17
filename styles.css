@@ -54,7 +54,8 @@ footer {
   background: #fff;
 }
 
-.hero-banner img {
+.hero-banner img,
+.hero-banner video {
   width: 100%;
   height: 100%;
   object-fit: contain;
