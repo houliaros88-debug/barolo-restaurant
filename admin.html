@@ -47,9 +47,11 @@
           </div>
           <div class="admin-controls">
             <button class="btn btn-primary" id="load-bookings" type="button">Booking</button>
-            <button class="btn btn-small" id="export-bookings" type="button" disabled>Export CSV</button>
             <button class="btn btn-small" id="open-add-reservation" type="button">Add reservation</button>
-            <button class="btn btn-ghost" id="admin-logout" type="button">Log out</button>
+            <div class="admin-controls-stack">
+              <button class="btn btn-ghost" id="admin-logout" type="button">Log out</button>
+              <button class="btn btn-small" id="export-bookings" type="button" disabled>Export CSV</button>
+            </div>
           </div>
           <p class="admin-greeting" id="admin-greeting">Welcome Barolo team.</p>
           <div class="admin-filters">

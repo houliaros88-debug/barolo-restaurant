@@ -550,6 +550,13 @@ footer {
   margin-bottom: 16px;
 }
 
+.admin-controls-stack {
+  margin-left: auto;
+  display: grid;
+  gap: 8px;
+  justify-items: end;
+}
+
 .admin-top {
   display: flex;
   justify-content: flex-end;
@@ -561,10 +568,6 @@ footer {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   opacity: 0.7;
-}
-
-.admin-controls #admin-logout {
-  margin-left: auto;
 }
 
 .admin-controls a.btn {
