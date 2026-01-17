@@ -1001,6 +1001,15 @@ footer {
   color: var(--sage);
 }
 
+.footer-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.footer-link:hover {
+  text-decoration: underline;
+}
+
 .footer-login {
   grid-column: 1 / -1;
   display: flex;
