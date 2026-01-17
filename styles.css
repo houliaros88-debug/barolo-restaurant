@@ -97,6 +97,10 @@ footer {
   filter: brightness(0) invert(1) drop-shadow(0 6px 18px rgba(0, 0, 0, 0.35));
 }
 
+.hero-logo {
+  margin-left: var(--page-pad);
+}
+
 .nav {
   position: relative;
   margin-bottom: 24px;
