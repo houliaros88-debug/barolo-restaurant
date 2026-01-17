@@ -331,8 +331,12 @@ footer {
 
 .gallery-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(240px, 1fr);
   gap: 16px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  scroll-snap-type: x mandatory;
 }
 
 .gallery-grid img {
@@ -341,6 +345,7 @@ footer {
   object-fit: cover;
   border-radius: 20px;
   box-shadow: var(--shadow);
+  scroll-snap-align: start;
 }
 
 .events {
