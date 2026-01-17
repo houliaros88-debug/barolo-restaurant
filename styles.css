@@ -425,6 +425,32 @@ body.nav-open .nav-links {
   scroll-snap-type: x mandatory;
 }
 
+.gallery-controls {
+  display: inline-flex;
+  gap: 10px;
+}
+
+.gallery-arrow {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(47, 34, 29, 0.18);
+  background: #ffffff;
+  color: var(--ink);
+  font-size: 16px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.gallery-arrow:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 20px rgba(55, 34, 28, 0.12);
+}
+
 .gallery-grid img {
   width: 100%;
   height: 220px;

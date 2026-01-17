@@ -32,6 +32,21 @@ if (revealItems.length) {
   revealItems.forEach((item) => observer.observe(item));
 }
 
+const gallery = document.querySelector('.gallery-grid');
+const galleryButtons = document.querySelectorAll('.gallery-arrow');
+if (gallery && galleryButtons.length) {
+  const getScrollAmount = () => Math.max(gallery.clientWidth * 0.6, 240);
+  galleryButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      const direction = button.dataset.dir === 'next' ? 1 : -1;
+      gallery.scrollBy({
+        left: direction * getScrollAmount(),
+        behavior: 'smooth',
+      });
+    });
+  });
+}
+
 const reservationForm = document.querySelector('#reservation-form');
 if (reservationForm) {
   const status = reservationForm.querySelector('.form-status');
