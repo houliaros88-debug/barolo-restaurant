@@ -377,10 +377,10 @@ const renderBookingRow = (booking) => {
 
   return `
     <tr>
-      <td>${escapeHtml(booking.date)}</td>
       <td>${escapeHtml(booking.time)}</td>
       <td>${escapeHtml(booking.guests)}</td>
       <td>${escapeHtml(booking.name)}</td>
+      <td>${escapeHtml(booking.table_number ?? '—')}</td>
       <td><span class="status-pill status-${displayStatus}">${escapeHtml(statusLabelMap[displayStatus] || displayStatus)}</span></td>
       <td>
         <button class="admin-action info" data-info-id="${escapeHtml(booking.id)}" data-info="${infoPayload}" type="button">i</button>
