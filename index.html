@@ -18,16 +18,24 @@
   </head>
   <body>
     <div class="page-texture" aria-hidden="true"></div>
-    <header class="hero">
-      <nav class="nav">
-        <div class="logo" aria-label="Barolo logo">
-          <img src="BAROLO_LOGO_VER1_fixed_transparent_6x.png" alt="Barolo logo" />
+    <header class="hero hero-with-banner">
+      <div class="hero-banner">
+        <img
+          src="images/22DA557E-9DCA-4EB2-8447-C330C9AA8267.jpg"
+          alt="Barolo seaside view"
+        />
+        <div class="hero-banner-overlay">
+          <div class="logo hero-logo" aria-label="Barolo logo">
+            <img src="BAROLO_LOGO_VER1_fixed_transparent_6x.png" alt="Barolo logo" />
+          </div>
+          <button class="nav-toggle" type="button" aria-expanded="false" aria-label="Open menu">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
         </div>
-        <button class="nav-toggle" type="button" aria-expanded="false" aria-label="Open menu">
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
+      </div>
+      <nav class="nav">
         <div class="nav-links">
           <a href="#menu">Menu</a>
           <a href="#story">Story</a>
@@ -35,7 +43,6 @@
           <a href="#reservations">Reservations</a>
           <a href="#visit">Visit</a>
         </div>
-        <a class="btn btn-outline" href="#reservations">Reserve</a>
       </nav>
 
       <div class="hero-grid">
