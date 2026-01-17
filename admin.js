@@ -116,6 +116,39 @@ const statusPriority = (value) => {
   return map[normalizeStatus(value)] ?? 9;
 };
 
+const getBookingDateTime = (booking) => {
+  if (!booking?.date || !booking?.time) {
+    return null;
+  }
+  const candidate = new Date(`${booking.date}T${booking.time}`);
+  if (Number.isNaN(candidate.getTime())) {
+    return null;
+  }
+  return candidate;
+};
+
+const getDisplayStatus = (booking) => {
+  const baseStatus = normalizeStatus(booking?.status);
+  if (baseStatus !== 'confirmed') {
+    return baseStatus;
+  }
+  const scheduled = getBookingDateTime(booking);
+  if (!scheduled) {
+    return baseStatus;
+  }
+  const now = new Date();
+  return now > scheduled ? 'late' : baseStatus;
+};
+
+const statusLabelMap = {
+  pending: 'pending',
+  confirmed: 'confirmed',
+  seated: 'came',
+  no_show: 'no show',
+  cancelled: 'cancelled',
+  late: 'late',
+};
+
 const sortBookings = (bookings) => {
   return [...bookings].sort((a, b) => {
     const statusDiff = statusPriority(a.status) - statusPriority(b.status);
@@ -157,6 +190,13 @@ const updateNow = () => {
     hour12: false,
   });
   adminNow.textContent = `${datePart} • ${timePart}`;
+};
+
+const tickAdminClock = () => {
+  updateNow();
+  if (allBookings.length) {
+    applyFilters();
+  }
 };
 
 const toDateKey = (date) => {
@@ -299,13 +339,14 @@ const getAccessToken = async () => {
 
 const renderBookingRow = (booking) => {
   const statusValue = normalizeStatus(booking.status);
+  const displayStatus = getDisplayStatus(booking);
   const actionMap = {
     pending: [
       { action: 'confirmed', label: 'Confirm', className: 'confirm' },
       { action: 'cancelled', label: 'Cancel', className: 'cancel' },
     ],
     confirmed: [
-      { action: 'seated', label: 'Seated', className: 'seated' },
+      { action: 'seated', label: 'Came', className: 'seated' },
       { action: 'no_show', label: 'No show', className: 'no-show' },
       { action: 'cancelled', label: 'Cancel', className: 'cancel' },
     ],
@@ -340,7 +381,7 @@ const renderBookingRow = (booking) => {
       <td>${escapeHtml(booking.time)}</td>
       <td>${escapeHtml(booking.guests)}</td>
       <td>${escapeHtml(booking.name)}</td>
-      <td><span class="status-pill status-${statusValue}">${escapeHtml(statusValue)}</span></td>
+      <td><span class="status-pill status-${displayStatus}">${escapeHtml(statusLabelMap[displayStatus] || displayStatus)}</span></td>
       <td>
         <button class="admin-action info" data-info-id="${escapeHtml(booking.id)}" data-info="${infoPayload}" type="button">i</button>
       </td>
@@ -888,8 +929,8 @@ if (!config.url || !config.anonKey) {
   disableLogin('Login unavailable. Missing configuration.');
 } else {
   setSelectedDate(new Date());
-  updateNow();
-  window.setInterval(updateNow, 60000);
+  tickAdminClock();
+  window.setInterval(tickAdminClock, 60000);
   refreshSession().then((session) => {
     if (session) {
       setAuthStatus('', '');
