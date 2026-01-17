@@ -558,6 +558,10 @@ footer {
   opacity: 0.7;
 }
 
+.admin-controls #admin-logout {
+  margin-left: auto;
+}
+
 .admin-controls a.btn {
   text-decoration: none;
 }
