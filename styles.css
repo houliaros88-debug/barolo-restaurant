@@ -1102,6 +1102,12 @@ body.nav-open .nav-links {
   gap: 8px;
 }
 
+.footer-login-logo img {
+  height: 90px;
+  width: auto;
+  display: block;
+}
+
 [data-reveal] {
   opacity: 0;
   transform: translateY(20px);
