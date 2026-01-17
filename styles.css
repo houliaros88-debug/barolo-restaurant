@@ -489,6 +489,10 @@ footer {
   max-width: 720px;
 }
 
+.admin-logo img {
+  height: 160px;
+}
+
 .admin-panel {
   background: var(--cream);
   border-radius: var(--radius);
