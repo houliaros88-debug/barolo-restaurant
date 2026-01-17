@@ -1168,6 +1168,10 @@ body.nav-open .nav-links {
 }
 
 @media (max-width: 1024px) {
+  .hero-banner {
+    height: 420px;
+  }
+
   .hero-grid,
   .story,
   .visit-card {
@@ -1222,6 +1226,14 @@ body.nav-open .nav-links {
 @media (max-width: 640px) {
   .hero {
     padding: 24px 0 40px;
+  }
+
+  .hero-banner {
+    height: 320px;
+  }
+
+  .hero-logo img {
+    height: 120px;
   }
 
   .hero-media {
