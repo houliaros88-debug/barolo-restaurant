@@ -77,6 +77,7 @@ footer {
 
 .hero-logo img {
   height: 160px;
+  filter: brightness(0) invert(1) drop-shadow(0 6px 18px rgba(0, 0, 0, 0.35));
 }
 
 .nav {
