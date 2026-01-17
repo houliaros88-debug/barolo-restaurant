@@ -272,6 +272,7 @@ body.nav-open .nav-links {
 .hero-media {
   display: grid;
   gap: 20px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .hero-card {
@@ -279,6 +280,7 @@ body.nav-open .nav-links {
   overflow: hidden;
   box-shadow: var(--shadow);
   position: relative;
+  background: #fff;
 }
 
 .hero-card.primary {
@@ -291,13 +293,9 @@ body.nav-open .nav-links {
 
 .hero-card img {
   width: 100%;
-  height: 320px;
-  object-fit: cover;
+  height: 360px;
+  object-fit: contain;
   display: block;
-}
-
-.hero-card.secondary img {
-  height: 220px;
 }
 
 .hero-stamp {
@@ -1151,6 +1149,10 @@ body.nav-open .nav-links {
 @media (max-width: 640px) {
   .hero {
     padding: 24px 5vw 40px;
+  }
+
+  .hero-media {
+    grid-template-columns: 1fr;
   }
 
   .hero-card img {
