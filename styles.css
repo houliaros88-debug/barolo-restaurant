@@ -61,6 +61,18 @@ footer {
   font-size: 28px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+  display: flex;
+  align-items: center;
+}
+
+.logo img {
+  height: 44px;
+  width: auto;
+  display: block;
+}
+
+.footer .logo img {
+  height: 36px;
 }
 
 .nav-links {
