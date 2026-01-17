@@ -250,8 +250,9 @@ module.exports = async (req, res) => {
     updatePayload.table_number = tableNumber;
   }
 
+  let statusValue = null;
   if (body?.status !== undefined) {
-    const statusValue = String(body.status || '').trim().toLowerCase();
+    statusValue = String(body.status || '').trim().toLowerCase();
     if (!allowedStatuses.includes(statusValue)) {
       sendJson(res, 400, { error: 'Invalid status.' });
       return;
