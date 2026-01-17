@@ -382,6 +382,13 @@ footer {
   letter-spacing: 0.12em;
 }
 
+.field-note {
+  font-size: 11px;
+  text-transform: none;
+  letter-spacing: 0.04em;
+  opacity: 0.6;
+}
+
 .reservation-form input,
 .reservation-form textarea {
   border-radius: 12px;
