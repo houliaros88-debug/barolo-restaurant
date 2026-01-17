@@ -550,8 +550,13 @@ footer {
   margin-bottom: 16px;
 }
 
+.admin-top {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 8px;
+}
+
 .admin-now {
-  margin-left: auto;
   font-size: 12px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
