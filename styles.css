@@ -278,6 +278,14 @@ body.nav-open .nav-links {
   position: relative;
 }
 
+.hero-card.primary {
+  background: #fff;
+}
+
+.hero-card.primary img {
+  object-fit: contain;
+}
+
 .hero-card img {
   width: 100%;
   height: 320px;
