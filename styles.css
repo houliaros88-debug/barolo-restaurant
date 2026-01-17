@@ -60,6 +60,14 @@ footer {
   display: block;
 }
 
+.hero-banner::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.1));
+  z-index: 1;
+}
+
 .hero-banner-overlay {
   position: absolute;
   inset: 0;
@@ -68,6 +76,7 @@ footer {
   justify-content: space-between;
   padding: 16px 6vw;
   pointer-events: none;
+  z-index: 2;
 }
 
 .hero-banner-overlay .logo,
