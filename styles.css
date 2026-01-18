@@ -405,6 +405,11 @@ body.nav-open .nav-links {
   opacity: 0.75;
 }
 
+.menu-subhead {
+  padding-left: var(--page-pad);
+  padding-right: var(--page-pad);
+}
+
 .story {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
