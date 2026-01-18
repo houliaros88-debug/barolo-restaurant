@@ -389,6 +389,22 @@ body.nav-open .nav-links {
   font-weight: 600;
 }
 
+.menu-subsection {
+  margin-top: 32px;
+  display: grid;
+  gap: 16px;
+}
+
+.menu-subhead h3 {
+  font-family: var(--font-serif);
+  font-size: 22px;
+  margin-bottom: 6px;
+}
+
+.menu-subhead p {
+  opacity: 0.75;
+}
+
 .story {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
