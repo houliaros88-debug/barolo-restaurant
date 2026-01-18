@@ -343,6 +343,13 @@ body.nav-open .nav-links {
   padding-right: var(--page-pad);
 }
 
+.section-actions {
+  display: inline-flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
 .section h2 {
   font-family: var(--font-serif);
   font-size: 32px;
