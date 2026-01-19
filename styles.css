@@ -72,6 +72,10 @@ footer {
   z-index: 1;
 }
 
+.hero-banner.menu-banner::after {
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.05));
+}
+
 .hero-banner-overlay {
   position: absolute;
   inset: 0;
