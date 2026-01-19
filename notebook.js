@@ -3,13 +3,18 @@ const notesStatus = document.querySelector('#notes-status');
 const noteInput = document.querySelector('#note-input');
 const noteAddButton = document.querySelector('#note-add');
 const lockButton = document.querySelector('#notebook-lock');
+const categoryButtons = document.querySelectorAll('[data-category]');
 const gate = document.querySelector('#notebook-gate');
 const mainContent = document.querySelector('main');
 
 const PASSKEY_KEY = 'barolo-notebook-passkey';
 const OK_KEY = 'barolo-notebook-passkey-ok';
+const CATEGORY_KEY = 'barolo-notebook-category';
+const CATEGORIES = ['barolo', 'harem'];
+const savedCategory = sessionStorage.getItem(CATEGORY_KEY);
 
 let notes = [];
+let currentCategory = CATEGORIES.includes(savedCategory) ? savedCategory : 'barolo';
 
 const setNotesStatus = (message, state) => {
   if (!notesStatus) {
@@ -20,6 +25,23 @@ const setNotesStatus = (message, state) => {
 };
 
 const getPasskey = () => sessionStorage.getItem(PASSKEY_KEY) || '';
+
+const setActiveCategory = (category, shouldLoad = true) => {
+  const nextCategory = CATEGORIES.includes(category) ? category : 'barolo';
+  if (nextCategory === currentCategory && shouldLoad) {
+    return;
+  }
+  currentCategory = nextCategory;
+  sessionStorage.setItem(CATEGORY_KEY, currentCategory);
+  categoryButtons.forEach((button) => {
+    const isActive = button.dataset.category === currentCategory;
+    button.classList.toggle('is-active', isActive);
+    button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+  });
+  if (shouldLoad) {
+    loadNotes();
+  }
+};
 
 const renderNotes = () => {
   if (!notesList) {
@@ -73,7 +95,9 @@ const loadNotes = async () => {
   }
   setNotesStatus('Loading notes...', 'loading');
   try {
-    const response = await notebookFetch('/api/notebook-notes');
+    const response = await notebookFetch(
+      `/api/notebook-notes?category=${encodeURIComponent(currentCategory)}`
+    );
     const data = await response.json();
     if (!response.ok) {
       throw new Error(data.error || 'Failed to load notes.');
@@ -102,7 +126,7 @@ const addNote = async () => {
   try {
     const response = await notebookFetch('/api/notebook-notes', {
       method: 'POST',
-      body: JSON.stringify({ text }),
+      body: JSON.stringify({ text, category: currentCategory }),
     });
     const data = await response.json();
     if (!response.ok) {
@@ -133,7 +157,7 @@ const updateNote = async (id, done) => {
   try {
     const response = await notebookFetch('/api/notebook-notes', {
       method: 'PATCH',
-      body: JSON.stringify({ id, done }),
+      body: JSON.stringify({ id, done, category: currentCategory }),
     });
     const data = await response.json();
     if (!response.ok) {
@@ -183,4 +207,11 @@ if (lockButton) {
   lockButton.addEventListener('click', lockNotebook);
 }
 
+categoryButtons.forEach((button) => {
+  button.addEventListener('click', () => {
+    setActiveCategory(button.dataset.category);
+  });
+});
+
+setActiveCategory(currentCategory, false);
 loadNotes();

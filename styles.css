@@ -920,6 +920,10 @@ body.nav-open .nav-links {
   padding: 6px 12px;
   border-radius: 999px;
   transition: background 0.2s ease, color 0.2s ease;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  cursor: pointer;
 }
 
 .admin-page-link.is-active {

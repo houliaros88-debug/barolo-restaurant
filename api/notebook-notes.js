@@ -34,6 +34,14 @@ const parseBody = async (req) => {
 const getPasskey = (req, body) =>
   String(req.headers['x-notebook-passkey'] || body?.passkey || '').trim();
 
+const normalizeCategory = (value) => {
+  const candidate = String(value || '').trim().toLowerCase();
+  if (candidate === 'harem') {
+    return 'harem';
+  }
+  return 'barolo';
+};
+
 module.exports = async (req, res) => {
   if (!['GET', 'POST', 'PATCH'].includes(req.method)) {
     sendJson(res, 405, { error: 'Method not allowed.' });
@@ -46,6 +54,7 @@ module.exports = async (req, res) => {
     return;
   }
 
+  const requestUrl = new URL(req.url, 'http://localhost');
   const body = req.method === 'GET' ? {} : await parseBody(req);
   const passkey = getPasskey(req, body);
   if (!passkey) {
@@ -57,10 +66,16 @@ module.exports = async (req, res) => {
     return;
   }
 
+  const category =
+    req.method === 'GET'
+      ? normalizeCategory(requestUrl.searchParams.get('category'))
+      : normalizeCategory(body?.category);
+
   if (req.method === 'GET') {
     const url = new URL(`${SUPABASE_URL}/rest/v1/notes`);
     url.searchParams.set('select', '*');
     url.searchParams.set('order', 'created_at.desc');
+    url.searchParams.set('category', `eq.${category}`);
 
     const response = await fetch(url.toString(), {
       headers: {
@@ -90,6 +105,7 @@ module.exports = async (req, res) => {
     const payload = {
       text,
       done: false,
+      category,
     };
 
     const createResponse = await fetch(`${SUPABASE_URL}/rest/v1/notes`, {
@@ -140,6 +156,7 @@ module.exports = async (req, res) => {
 
   const url = new URL(`${SUPABASE_URL}/rest/v1/notes`);
   url.searchParams.set('id', `eq.${id}`);
+  url.searchParams.set('category', `eq.${category}`);
 
   const response = await fetch(url.toString(), {
     method: 'PATCH',
