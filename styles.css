@@ -143,10 +143,11 @@ footer {
 
 body.nav-open .nav-links {
   display: grid;
-  position: absolute;
-  top: 12px;
-  left: 0;
-  right: 0;
+  position: fixed;
+  top: 76px;
+  right: var(--page-pad);
+  left: auto;
+  width: min(240px, calc(100vw - (2 * var(--page-pad))));
   background: #ffffff;
   padding: 20px;
   border-radius: 18px;
@@ -154,7 +155,7 @@ body.nav-open .nav-links {
   text-align: center;
   box-shadow: var(--shadow);
   border: 1px solid rgba(47, 34, 29, 0.1);
-  z-index: 2;
+  z-index: 5;
 }
 
 .nav-links a {
