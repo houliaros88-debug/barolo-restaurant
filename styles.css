@@ -588,7 +588,8 @@ body.nav-open .nav-links {
   scroll-snap-align: start;
 }
 
-.gallery-banner {
+.gallery-banner,
+.full-bleed-banner {
   width: 100vw;
   margin-left: 50%;
   transform: translateX(-50%);
@@ -598,7 +599,8 @@ body.nav-open .nav-links {
   background: #ffffff;
 }
 
-.gallery-banner img {
+.gallery-banner img,
+.full-bleed-banner img {
   width: 100%;
   height: 100%;
   display: block;
@@ -1442,7 +1444,8 @@ body.nav-open .nav-links {
     height: 260px;
   }
 
-  .gallery-banner {
+  .gallery-banner,
+  .full-bleed-banner {
     height: 240px;
   }
 
