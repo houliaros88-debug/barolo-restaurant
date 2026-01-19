@@ -1,19 +1,7 @@
 const config = window.BAROLO_SUPABASE || {};
 const STORAGE_KEY = 'barolo-admin-session';
-const SESSION_COOKIE = 'barolo_admin_sid';
-const SESSION_STORAGE_PREFIX = 'barolo-admin-session:';
-const storage = (() => {
-  try {
-    return window.localStorage;
-  } catch (error) {
-    try {
-      return window.sessionStorage;
-    } catch (innerError) {
-      return null;
-    }
-  }
-})();
-const usesLocalStorage = storage === window.localStorage;
+const CHANNEL_NAME = 'barolo-admin-auth';
+const authChannel = 'BroadcastChannel' in window ? new BroadcastChannel(CHANNEL_NAME) : null;
 
 const status = document.querySelector('#admin-status');
 const authStatus = document.querySelector('#admin-auth-status');
@@ -72,36 +60,41 @@ let notes = [];
 let infoBookingId = null;
 let selectedDate = new Date();
 
-const readCookie = (name) => {
-  const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  const match = document.cookie.match(new RegExp(`(?:^|; )${escaped}=([^;]*)`));
-  return match ? decodeURIComponent(match[1]) : null;
-};
-
-const setSessionCookie = (value) => {
-  document.cookie = `${SESSION_COOKIE}=${encodeURIComponent(value)}; path=/; SameSite=Lax`;
-};
-
-const clearSessionCookie = () => {
-  document.cookie = `${SESSION_COOKIE}=; Max-Age=0; path=/; SameSite=Lax`;
-};
-
-const createSessionId = () => {
-  if (window.crypto?.randomUUID) {
-    return window.crypto.randomUUID();
-  }
-  return `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 10)}`;
-};
-
-const clearStoredSessions = () => {
-  if (!storage || !usesLocalStorage) {
+const broadcastSession = (session) => {
+  if (!authChannel || !session) {
     return;
   }
-  for (let i = storage.length - 1; i >= 0; i -= 1) {
-    const key = storage.key(i);
-    if (key && key.startsWith(SESSION_STORAGE_PREFIX)) {
-      storage.removeItem(key);
-    }
+  authChannel.postMessage({ type: 'session', session });
+};
+
+const broadcastLogout = () => {
+  if (!authChannel) {
+    return;
+  }
+  authChannel.postMessage({ type: 'logout' });
+};
+
+const requestSession = () => {
+  if (!authChannel) {
+    return;
+  }
+  authChannel.postMessage({ type: 'session-request' });
+};
+
+const adoptSession = (session) => {
+  if (!session) {
+    return;
+  }
+  saveSession(session);
+  toggleAdmin(true);
+  updateAdminUser(session.access_token);
+  setAuthStatus('', '');
+  if (hasBookingsUI) {
+    loadBookings();
+    hideForm();
+  }
+  if (hasNotesUI) {
+    loadNotes();
   }
 };
 
@@ -325,6 +318,32 @@ const toggleAdmin = (isAuthed) => {
   }
 };
 
+if (authChannel) {
+  authChannel.addEventListener('message', (event) => {
+    const payload = event?.data;
+    if (!payload || typeof payload !== 'object') {
+      return;
+    }
+    if (payload.type === 'session-request') {
+      if (currentSession && isSessionValid(currentSession)) {
+        authChannel.postMessage({ type: 'session', session: currentSession });
+      }
+      return;
+    }
+    if (payload.type === 'session') {
+      if (!currentSession && payload.session) {
+        adoptSession(payload.session);
+      }
+      return;
+    }
+    if (payload.type === 'logout') {
+      if (currentSession) {
+        logout(false);
+      }
+    }
+  });
+}
+
 const disableLogin = (message) => {
   setAuthStatus(message, 'error');
   if (loginButton) {
@@ -518,63 +537,21 @@ const updateNote = async (id, done) => {
 
 const saveSession = (session) => {
   currentSession = session;
-  if (!storage) {
-    return;
-  }
-  if (!usesLocalStorage) {
-    if (session) {
-      storage.setItem(STORAGE_KEY, JSON.stringify(session));
-    } else {
-      storage.removeItem(STORAGE_KEY);
-    }
-    return;
-  }
-
   if (session) {
-    let sessionId = readCookie(SESSION_COOKIE);
-    if (!sessionId) {
-      sessionId = createSessionId();
-      setSessionCookie(sessionId);
-    }
-    storage.setItem(`${SESSION_STORAGE_PREFIX}${sessionId}`, JSON.stringify(session));
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(session));
   } else {
-    const sessionId = readCookie(SESSION_COOKIE);
-    if (sessionId) {
-      storage.removeItem(`${SESSION_STORAGE_PREFIX}${sessionId}`);
-    }
-    clearSessionCookie();
+    sessionStorage.removeItem(STORAGE_KEY);
   }
 };
 
 const loadSession = () => {
-  if (!storage) {
-    return null;
-  }
-  if (!usesLocalStorage) {
-    const raw = storage.getItem(STORAGE_KEY);
-    if (!raw) {
-      return null;
-    }
-    try {
-      return JSON.parse(raw);
-    } catch (error) {
-      return null;
-    }
-  }
-
-  const sessionId = readCookie(SESSION_COOKIE);
-  if (!sessionId) {
-    clearStoredSessions();
-    return null;
-  }
-  const raw = storage.getItem(`${SESSION_STORAGE_PREFIX}${sessionId}`);
+  const raw = sessionStorage.getItem(STORAGE_KEY);
   if (!raw) {
     return null;
   }
   try {
     return JSON.parse(raw);
   } catch (error) {
-    storage.removeItem(`${SESSION_STORAGE_PREFIX}${sessionId}`);
     return null;
   }
 };
@@ -1032,6 +1009,7 @@ const login = async () => {
   toggleAdmin(true);
   updateAdminUser(session.access_token);
   setAuthStatus('', '');
+  broadcastSession(session);
   if (hasBookingsUI) {
     loadBookings();
   }
@@ -1040,7 +1018,7 @@ const login = async () => {
   }
 };
 
-const logout = () => {
+const logout = (shouldBroadcast = true) => {
   saveSession(null);
   allBookings = [];
   visibleBookings = [];
@@ -1053,6 +1031,9 @@ const logout = () => {
   setNotesStatus('', '');
   setAdminUser(null);
   toggleAdmin(false);
+  if (shouldBroadcast) {
+    broadcastLogout();
+  }
 };
 
 const openAddReservation = async () => {
@@ -1272,6 +1253,8 @@ if (!config.url || !config.anonKey) {
       if (hasNotesUI) {
         loadNotes();
       }
+    } else {
+      requestSession();
     }
   });
 }
