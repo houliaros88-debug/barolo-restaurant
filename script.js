@@ -90,8 +90,7 @@ const translations = {
     menu_page_title: 'Barolo | Menu',
     menu_page_eyebrow: 'Menu',
     menu_page_heading: 'Menu for 2026 is in progress',
-    menu_page_body:
-      'Our full menu will be published soon. For now, please ask our team on arrival and we will guide you through the daily selections.',
+    menu_page_body: 'Our full menu will be published soon.',
     menu_page_back: 'Back to home',
     wine_page_title: 'Barolo | Wine List',
     wine_page_eyebrow: 'Wine List',
@@ -198,8 +197,7 @@ const translations = {
     menu_page_title: 'Barolo | Μενού',
     menu_page_eyebrow: 'Μενού',
     menu_page_heading: 'Το μενού για το 2026 είναι υπό διαμόρφωση',
-    menu_page_body:
-      'Το πλήρες μενού μας θα δημοσιευθεί σύντομα. Προς το παρόν, ρωτήστε την ομάδα μας κατά την άφιξή σας και θα σας καθοδηγήσουμε στις ημερήσιες επιλογές.',
+    menu_page_body: 'Το πλήρες μενού μας θα δημοσιευθεί σύντομα.',
     menu_page_back: 'Πίσω στην αρχική',
     wine_page_title: 'Barolo | Λίστα κρασιών',
     wine_page_eyebrow: 'Λίστα κρασιών',
