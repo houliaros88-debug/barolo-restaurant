@@ -931,9 +931,26 @@ body.nav-open .nav-links {
   color: #fff;
 }
 
+.admin-page-link:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .admin-page-link:focus-visible {
   outline: 2px solid rgba(47, 34, 29, 0.4);
   outline-offset: 2px;
+}
+
+.notebook-passkey {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-end;
+  margin-bottom: 16px;
+}
+
+.notebook-passkey .admin-status {
+  flex-basis: 100%;
 }
 
 .notebook-gate {

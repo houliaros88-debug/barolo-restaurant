@@ -23,24 +23,21 @@
       </div>
     </header>
 
-    <div class="notebook-gate" id="notebook-gate">
-      <div class="admin-card notebook-gate-card">
-        <p class="section-eyebrow">Notebook access</p>
-        <label class="admin-label">
-          Pass key
-          <input type="password" id="notebook-passkey" placeholder="Enter pass key" autocomplete="off" />
-        </label>
-        <button class="btn btn-primary" id="notebook-unlock" type="button">Unlock</button>
-        <div class="admin-status" id="notebook-gate-status" role="status" aria-live="polite"></div>
-      </div>
-    </div>
-    <main hidden>
+    <main>
       <section class="section admin-panel">
         <div class="admin-pages">
           <a class="admin-page-link" href="/admin.html">Bookings</a>
           <a class="admin-page-link is-active" href="/notebook.html" aria-current="page">Notebook</a>
         </div>
         <p class="admin-hint">Shared notes for the team.</p>
+        <div class="notebook-passkey">
+          <label class="admin-label">
+            Pass key
+            <input type="password" id="notebook-passkey" placeholder="Enter pass key" autocomplete="off" />
+          </label>
+          <button class="btn btn-primary" id="notebook-unlock" type="button">Unlock</button>
+          <div class="admin-status" id="notebook-gate-status" role="status" aria-live="polite"></div>
+        </div>
         <div class="admin-pages notebook-tabs" role="tablist" aria-label="Notebook categories">
           <button class="admin-page-link is-active" type="button" data-category="barolo" aria-pressed="true">
             Barolo
@@ -72,7 +69,6 @@
         </div>
       </section>
     </main>
-    <script src="notebook-gate.js?v=2" defer></script>
-    <script src="notebook.js?v=2" defer></script>
+    <script src="notebook.js?v=3" defer></script>
   </body>
 </html>
