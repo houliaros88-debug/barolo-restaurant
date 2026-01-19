@@ -42,26 +42,50 @@
   </head>
   <body class="menu-page">
     <div class="page-texture" aria-hidden="true"></div>
-    <header class="hero">
-      <div class="admin-header simple-header">
-        <div class="logo admin-logo" aria-label="Barolo logo">
-          <img src="BAROLO_LOGO_VER1_fixed_transparent_6x.png" alt="Barolo logo" />
+    <header class="hero hero-with-banner">
+      <div class="hero-banner menu-banner">
+        <img
+          src="images/IMG_2294.jpeg"
+          alt="Barolo wine list hero"
+          loading="eager"
+          fetchpriority="high"
+        />
+        <div class="hero-banner-overlay">
+          <div class="logo hero-logo" aria-label="Barolo logo">
+            <img src="BAROLO_LOGO_VER1_fixed_transparent_6x.png" alt="Barolo logo" />
+          </div>
+          <div class="hero-controls">
+            <button
+              class="lang-toggle"
+              type="button"
+              role="switch"
+              aria-checked="false"
+              aria-label="Toggle language"
+              data-lang-toggle
+            >
+              <span class="lang-toggle-label lang-toggle-label-en">EN</span>
+              <span class="lang-toggle-track" aria-hidden="true">
+                <span class="lang-toggle-thumb"></span>
+              </span>
+              <span class="lang-toggle-label lang-toggle-label-el">GR</span>
+            </button>
+            <button class="nav-toggle" type="button" aria-expanded="false" aria-label="Open menu">
+              <span></span>
+              <span></span>
+              <span></span>
+            </button>
+          </div>
         </div>
-        <button
-          class="lang-toggle"
-          type="button"
-          role="switch"
-          aria-checked="false"
-          aria-label="Toggle language"
-          data-lang-toggle
-        >
-          <span class="lang-toggle-label lang-toggle-label-en">EN</span>
-          <span class="lang-toggle-track" aria-hidden="true">
-            <span class="lang-toggle-thumb"></span>
-          </span>
-          <span class="lang-toggle-label lang-toggle-label-el">GR</span>
-        </button>
       </div>
+      <nav class="nav">
+        <div class="nav-links">
+          <a href="/menu.html" data-i18n="nav_menu">Menu</a>
+          <a href="/index.html#story" data-i18n="nav_story">Story</a>
+          <a href="/index.html#gallery" data-i18n="nav_gallery">Gallery</a>
+          <a href="/index.html#reservations" data-i18n="nav_reservations">Reservations</a>
+          <a href="/index.html#visit" data-i18n="nav_visit">Visit</a>
+        </div>
+      </nav>
     </header>
 
     <main>
