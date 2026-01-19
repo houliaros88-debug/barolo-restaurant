@@ -569,11 +569,28 @@ body.nav-open .nav-links {
 
 .gallery-grid img {
   width: 100%;
-  height: 280px;
+  height: 320px;
   object-fit: cover;
   border-radius: 20px;
   box-shadow: var(--shadow);
   scroll-snap-align: start;
+}
+
+.gallery-banner {
+  width: 100vw;
+  margin-left: 50%;
+  transform: translateX(-50%);
+  height: 360px;
+  margin-top: 24px;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+.gallery-banner img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
 }
 
 .events {
@@ -1398,6 +1415,10 @@ body.nav-open .nav-links {
   }
 
   .gallery-grid img {
+    height: 260px;
+  }
+
+  .gallery-banner {
     height: 240px;
   }
 
