@@ -1,5 +1,12 @@
 const config = window.BAROLO_SUPABASE || {};
 const STORAGE_KEY = 'barolo-admin-session';
+const storage = (() => {
+  try {
+    return window.localStorage;
+  } catch (error) {
+    return window.sessionStorage;
+  }
+})();
 
 const status = document.querySelector('#admin-status');
 const authStatus = document.querySelector('#admin-auth-status');
@@ -472,14 +479,14 @@ const updateNote = async (id, done) => {
 const saveSession = (session) => {
   currentSession = session;
   if (session) {
-    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(session));
+    storage.setItem(STORAGE_KEY, JSON.stringify(session));
   } else {
-    sessionStorage.removeItem(STORAGE_KEY);
+    storage.removeItem(STORAGE_KEY);
   }
 };
 
 const loadSession = () => {
-  const raw = sessionStorage.getItem(STORAGE_KEY);
+  const raw = storage.getItem(STORAGE_KEY);
   if (!raw) {
     return null;
   }
