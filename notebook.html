@@ -23,7 +23,18 @@
       </div>
     </header>
 
-    <main>
+    <div class="notebook-gate" id="notebook-gate">
+      <div class="admin-card notebook-gate-card">
+        <p class="section-eyebrow">Notebook access</p>
+        <label class="admin-label">
+          Pass key
+          <input type="password" id="notebook-passkey" placeholder="Enter pass key" autocomplete="off" />
+        </label>
+        <button class="btn btn-primary" id="notebook-unlock" type="button">Unlock</button>
+        <div class="admin-status" id="notebook-gate-status" role="status" aria-live="polite"></div>
+      </div>
+    </div>
+    <main hidden>
       <section class="section admin-panel">
         <div class="admin-auth" id="admin-auth">
           <div class="admin-card">
@@ -87,6 +98,6 @@
         anonKey: "sb_publishable_nCW5sikLAB4kS7YdHV830w_Uw_0hfFm",
       };
     </script>
-    <script src="admin.js" defer></script>
+    <script src="notebook-gate.js" defer></script>
   </body>
 </html>
