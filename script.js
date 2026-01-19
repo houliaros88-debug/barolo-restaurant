@@ -96,8 +96,7 @@ const translations = {
     wine_page_title: 'Barolo | Wine List',
     wine_page_eyebrow: 'Wine List',
     wine_page_heading: 'Wine list for 2026 is in progress',
-    wine_page_body:
-      'Our full wine list will be published soon. For now, ask our team and we will guide you through Italian favorites and Kos labels.',
+    wine_page_body: 'Our full wine list will be published soon.',
     status_thanks: 'Thank you. We will be in touch shortly.',
     status_invalid_time: 'Please choose a valid time.',
     status_time_window: 'Reservations are available between 17:00 and 23:00.',
@@ -205,8 +204,7 @@ const translations = {
     wine_page_title: 'Barolo | Λίστα κρασιών',
     wine_page_eyebrow: 'Λίστα κρασιών',
     wine_page_heading: 'Η λίστα κρασιών για το 2026 είναι υπό διαμόρφωση',
-    wine_page_body:
-      'Η πλήρης λίστα κρασιών μας θα δημοσιευθεί σύντομα. Προς το παρόν, ρωτήστε την ομάδα μας και θα σας καθοδηγήσουμε σε ιταλικά αγαπημένα και ετικέτες από την Κω.',
+    wine_page_body: 'Η πλήρης λίστα κρασιών μας θα δημοσιευθεί σύντομα.',
     status_thanks: 'Ευχαριστούμε. Θα επικοινωνήσουμε σύντομα.',
     status_invalid_time: 'Παρακαλώ επιλέξτε έγκυρη ώρα.',
     status_time_window: 'Οι κρατήσεις είναι διαθέσιμες μεταξύ 17:00 και 23:00.',
