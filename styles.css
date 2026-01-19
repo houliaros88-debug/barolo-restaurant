@@ -1168,6 +1168,25 @@ body.nav-open .nav-links {
   text-decoration: underline;
 }
 
+.social-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.social-icon {
+  width: 16px;
+  height: 16px;
+  display: inline-flex;
+}
+
+.social-icon svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+  fill: currentColor;
+}
+
 .footer-login {
   grid-column: 1 / -1;
   display: flex;
