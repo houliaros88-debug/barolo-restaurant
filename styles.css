@@ -789,6 +789,7 @@ body.nav-open .nav-links {
 
 .admin-logo {
   margin-left: var(--page-pad);
+  margin-top: 12px;
 }
 
 .admin-logo img {
