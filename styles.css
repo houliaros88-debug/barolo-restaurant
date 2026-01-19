@@ -879,10 +879,21 @@ body.nav-open .nav-links {
 .admin-top {
   display: flex;
   justify-content: flex-start;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
   margin-bottom: 8px;
 }
 
 .admin-now {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+.admin-user {
+  margin-left: auto;
   font-size: 12px;
   letter-spacing: 0.08em;
   text-transform: uppercase;

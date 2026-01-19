@@ -13,6 +13,7 @@ const loadButton = document.querySelector('#load-bookings');
 const exportButton = document.querySelector('#export-bookings');
 const adminNow = document.querySelector('#admin-now');
 const adminGreeting = document.querySelector('#admin-greeting');
+const adminUser = document.querySelector('#admin-user');
 const datePrevButton = document.querySelector('#date-prev');
 const dateNextButton = document.querySelector('#date-next');
 const dateDisplay = document.querySelector('#date-display');
@@ -46,6 +47,7 @@ let allBookings = [];
 let visibleBookings = [];
 let editingId = null;
 let currentSession = null;
+let cachedUserLabel = null;
 let infoBookingId = null;
 let selectedDate = new Date();
 
@@ -55,6 +57,21 @@ const setStatus = (message, state) => {
   }
   status.textContent = message;
   status.dataset.state = state || '';
+};
+
+const setAdminUser = (label) => {
+  if (!adminUser) {
+    return;
+  }
+  if (!label) {
+    adminUser.textContent = '';
+    adminUser.hidden = true;
+    cachedUserLabel = null;
+    return;
+  }
+  adminUser.textContent = `Signed in as ${label}`;
+  adminUser.hidden = false;
+  cachedUserLabel = label;
 };
 
 const setAuthStatus = (message, state) => {
@@ -259,6 +276,38 @@ const authHeaders = () => ({
   'Content-Type': 'application/json',
 });
 
+const fetchAuthUser = async (token) => {
+  if (!config.url || !config.anonKey || !token) {
+    return null;
+  }
+  try {
+    const response = await fetch(`${config.url}/auth/v1/user`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        apikey: config.anonKey,
+      },
+    });
+    if (!response.ok) {
+      return null;
+    }
+    return await response.json();
+  } catch (error) {
+    return null;
+  }
+};
+
+const updateAdminUser = async (token) => {
+  if (!adminUser || cachedUserLabel) {
+    return;
+  }
+  const user = await fetchAuthUser(token);
+  const meta = user?.user_metadata || {};
+  const label = meta.full_name || meta.name || user?.email || null;
+  if (label) {
+    setAdminUser(label);
+  }
+};
+
 const saveSession = (session) => {
   currentSession = session;
   if (session) {
@@ -308,6 +357,7 @@ const refreshSession = async () => {
   if (session && isSessionValid(session)) {
     currentSession = session;
     toggleAdmin(true);
+    updateAdminUser(session.access_token);
     return session;
   }
 
@@ -323,12 +373,14 @@ const refreshSession = async () => {
       };
       saveSession(updated);
       toggleAdmin(true);
+      updateAdminUser(updated.access_token);
       return updated;
     }
   }
 
   saveSession(null);
   toggleAdmin(false);
+  setAdminUser(null);
   return null;
 };
 
@@ -722,6 +774,7 @@ const login = async () => {
 
   saveSession(session);
   toggleAdmin(true);
+  updateAdminUser(session.access_token);
   setAuthStatus('', '');
   loadBookings();
 };
@@ -734,6 +787,7 @@ const logout = () => {
   resetForm();
   hideForm();
   setStatus('', '');
+  setAdminUser(null);
   toggleAdmin(false);
 };
 
