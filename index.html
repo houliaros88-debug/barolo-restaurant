@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Barolo | Italian Wine Bar Restaurant in Kos</title>
+    <title data-i18n="page_title_home">Barolo | Italian Wine Bar Restaurant in Kos</title>
     <meta
       name="description"
       content="Barolo is an Italian wine bar restaurant in Kos, opened in 2025, serving pasta and pizza with an all-Italian wine list plus local Kos labels, just across the street from the sea."
@@ -85,47 +85,65 @@
           <div class="logo hero-logo" aria-label="Barolo logo">
             <img src="BAROLO_LOGO_VER1_fixed_transparent_6x.png" alt="Barolo logo" />
           </div>
-          <button class="nav-toggle" type="button" aria-expanded="false" aria-label="Open menu">
-            <span></span>
-            <span></span>
-            <span></span>
-          </button>
+          <div class="hero-controls">
+            <button
+              class="lang-toggle"
+              type="button"
+              role="switch"
+              aria-checked="false"
+              aria-label="Toggle language"
+              data-lang-toggle
+            >
+              <span class="lang-toggle-label lang-toggle-label-en">EN</span>
+              <span class="lang-toggle-track" aria-hidden="true">
+                <span class="lang-toggle-thumb"></span>
+              </span>
+              <span class="lang-toggle-label lang-toggle-label-el">GR</span>
+            </button>
+            <button class="nav-toggle" type="button" aria-expanded="false" aria-label="Open menu">
+              <span></span>
+              <span></span>
+              <span></span>
+            </button>
+          </div>
         </div>
       </div>
       <nav class="nav">
         <div class="nav-links">
-          <a href="#menu">Menu</a>
-          <a href="#story">Story</a>
-          <a href="#gallery">Gallery</a>
-          <a href="#reservations">Reservations</a>
-          <a href="#visit">Visit</a>
+          <a href="#menu" data-i18n="nav_menu">Menu</a>
+          <a href="#story" data-i18n="nav_story">Story</a>
+          <a href="#gallery" data-i18n="nav_gallery">Gallery</a>
+          <a href="#reservations" data-i18n="nav_reservations">Reservations</a>
+          <a href="#visit" data-i18n="nav_visit">Visit</a>
         </div>
       </nav>
 
       <div class="hero-grid">
         <div class="hero-content" data-reveal>
-          <h1>Italian Wine Bar Restaurant in Kos</h1>
-          <p class="lead">
+          <h1 data-i18n="hero_title">Italian Wine Bar Restaurant in Kos</h1>
+          <p class="lead" data-i18n="hero_lead">
             Traditional Italian pasta and pizza, paired with an all-Italian wine
             list and local Kos labels, with the sea just across the street.
             Perfect for romantic dinners, friends, and group gatherings.
           </p>
           <div class="hero-actions">
-            <a class="btn btn-primary" href="#reservations">Book a table</a>
-            <a class="btn btn-ghost" href="#menu">Explore menu</a>
+            <a class="btn btn-primary" href="#reservations" data-i18n="hero_cta_book">Book a table</a>
+            <a class="btn btn-ghost" href="#menu" data-i18n="hero_cta_menu">Explore menu</a>
           </div>
           <div class="hero-highlights">
             <div>
-              <span>Status</span>
-              <strong>Closed now. Reopens 1 May</strong>
-              <span class="field-note">Open 17:00 - 01:00 (closed Tuesday). Kitchen until 23:00.</span>
+              <span data-i18n="hero_status_label">Status</span>
+              <strong data-i18n="hero_status_value">Closed now. Reopens 1 May</strong>
+              <span class="field-note" data-i18n="hero_status_note">
+                Open 17:00 - 01:00 (closed Tuesday). Kitchen until 23:00.
+              </span>
             </div>
             <div>
-              <span>Address</span>
+              <span data-i18n="hero_address_label">Address</span>
               <strong>Vasileos Georgiou V' 26, Kos 853 00, Greece</strong>
             </div>
             <div>
-              <span>Call</span>
+              <span data-i18n="hero_call_label">Call</span>
               <strong>+302242028047</strong>
             </div>
           </div>
@@ -153,58 +171,76 @@
       <section id="menu" class="section" data-reveal>
         <div class="section-header">
           <div>
-            <p class="section-eyebrow">Menu Highlights</p>
-            <h2>Traditional Italian, crafted fresh daily</h2>
-            <p>
+            <p class="section-eyebrow" data-i18n="menu_eyebrow">Menu Highlights</p>
+            <h2 data-i18n="menu_title">Traditional Italian, crafted fresh daily</h2>
+            <p data-i18n="menu_intro">
               Traditional Italian cuisine, prepared fresh every day. Made with
               top-quality ingredients and led by Executive Chef Nikos Iliadis
               and his team, alongside Chef Giannis Lamprou.
             </p>
           </div>
           <div class="section-actions">
-            <a class="btn btn-small" href="/menu.html">View menu</a>
-            <a class="btn btn-small btn-outline" href="/wine-list.html">Wine list</a>
+            <a class="btn btn-small" href="/menu.html" data-i18n="menu_cta_view">View menu</a>
+            <a class="btn btn-small btn-outline" href="/wine-list.html" data-i18n="menu_cta_wine">Wine list</a>
           </div>
         </div>
         <div class="menu-grid">
           <article class="menu-card">
             <h3>Tagliatelle Tartufata</h3>
-            <p>Tender beef fillets, mushrooms, aroma of white truffle and fresh chives.</p>
+            <p data-i18n="menu_item_tagliatelle_desc">
+              Tender beef fillets, mushrooms, aroma of white truffle and fresh chives.
+            </p>
           </article>
           <article class="menu-card">
             <h3>Gnocchi Primavera</h3>
-            <p>Gnocchi with vegetable ratatouille, cherry tomatoes, broccoli, and an aromatic pomodoro sauce.</p>
+            <p data-i18n="menu_item_gnocchi_desc">
+              Gnocchi with vegetable ratatouille, cherry tomatoes, broccoli, and an aromatic pomodoro sauce.
+            </p>
           </article>
           <article class="menu-card">
             <h3>Fettuccine ai Gamberi</h3>
-            <p>Napoli sauce with shrimp, mastic liqueur, shrimp bisque, and fresh basil.</p>
+            <p data-i18n="menu_item_fettuccine_desc">
+              Napoli sauce with shrimp, mastic liqueur, shrimp bisque, and fresh basil.
+            </p>
           </article>
           <article class="menu-card">
             <h3>Ravioli al Ragù di Manzo</h3>
-            <p>Handmade ravioli with slow-cooked beef ragout, Barolo wine gravy, and freshly grated parmesan.</p>
+            <p data-i18n="menu_item_ravioli_desc">
+              Handmade ravioli with slow-cooked beef ragout, Barolo wine gravy, and freshly grated parmesan.
+            </p>
           </article>
         </div>
         <div class="menu-subsection">
           <div class="menu-subhead">
-            <h3>Wine list highlights</h3>
-            <p>Italian classics and handpicked Kos labels, curated to pair with every table.</p>
+            <h3 data-i18n="menu_wine_highlights_title">Wine list highlights</h3>
+            <p data-i18n="menu_wine_highlights_intro">
+              Italian classics and handpicked Kos labels, curated to pair with every table.
+            </p>
           </div>
           <div class="menu-grid">
             <article class="menu-card">
-              <h3>Italian Reds</h3>
-              <p>Deep, structured reds chosen for pasta, pizza, and long dinners.</p>
+              <h3 data-i18n="menu_wine_reds_title">Italian Reds</h3>
+              <p data-i18n="menu_wine_reds_desc">
+                Deep, structured reds chosen for pasta, pizza, and long dinners.
+              </p>
             </article>
             <article class="menu-card">
-              <h3>Italian Whites</h3>
-              <p>Crisp coastal whites and aromatic blends for seafood and starters.</p>
+              <h3 data-i18n="menu_wine_whites_title">Italian Whites</h3>
+              <p data-i18n="menu_wine_whites_desc">
+                Crisp coastal whites and aromatic blends for seafood and starters.
+              </p>
             </article>
             <article class="menu-card">
-              <h3>Kos Labels</h3>
-              <p>Local bottles that bring the island character to the table.</p>
+              <h3 data-i18n="menu_wine_kos_title">Kos Labels</h3>
+              <p data-i18n="menu_wine_kos_desc">
+                Local bottles that bring the island character to the table.
+              </p>
             </article>
             <article class="menu-card">
-              <h3>Sparkling &amp; Rosé</h3>
-              <p>Bright, celebratory pours for aperitivo and sunset tables.</p>
+              <h3 data-i18n="menu_wine_sparkling_title">Sparkling &amp; Rosé</h3>
+              <p data-i18n="menu_wine_sparkling_desc">
+                Bright, celebratory pours for aperitivo and sunset tables.
+              </p>
             </article>
           </div>
         </div>
@@ -212,9 +248,9 @@
 
       <section id="story" class="section story" data-reveal>
         <div class="story-content">
-          <p class="section-eyebrow">Our Story</p>
-          <h2>Opened in 2025, rooted in Italian tradition</h2>
-          <p>
+          <p class="section-eyebrow" data-i18n="story_eyebrow">Our Story</p>
+          <h2 data-i18n="story_title">Opened in 2025, rooted in Italian tradition</h2>
+          <p data-i18n="story_body">
             When we opened our doors, we did not just want to serve Italian
             food. We wanted to create a place that feels easy and welcoming.
             A table where pasta and pizza are made with care, a glass is always
@@ -226,9 +262,9 @@
             and made for sharing.
           </p>
           <ul>
-            <li>Traditional pasta and pizza made daily.</li>
-            <li>Italian wines plus local Kos labels.</li>
-            <li>Sea-view evenings for romance, friends, and groups.</li>
+            <li data-i18n="story_list_one">Traditional pasta and pizza made daily.</li>
+            <li data-i18n="story_list_two">Italian wines plus local Kos labels.</li>
+            <li data-i18n="story_list_three">Sea-view evenings for romance, friends, and groups.</li>
           </ul>
         </div>
         <div class="story-image">
@@ -244,8 +280,8 @@
       <section id="gallery" class="section" data-reveal>
         <div class="section-header">
           <div>
-            <p class="section-eyebrow">Gallery</p>
-            <h2>From sea light to night glow</h2>
+            <p class="section-eyebrow" data-i18n="gallery_eyebrow">Gallery</p>
+            <h2 data-i18n="gallery_title">From sea light to night glow</h2>
           </div>
           <div class="gallery-controls" aria-label="Gallery navigation">
             <button class="gallery-arrow" type="button" data-dir="prev" aria-label="Scroll gallery left">
@@ -484,22 +520,22 @@
 
       <section class="section events" data-reveal>
         <div>
-          <p class="section-eyebrow">Private Events</p>
-          <h2>Gatherings for romance, friends, and big groups</h2>
-          <p>
+          <p class="section-eyebrow" data-i18n="events_eyebrow">Private Events</p>
+          <h2 data-i18n="events_title">Gatherings for romance, friends, and big groups</h2>
+          <p data-i18n="events_body">
             Celebrate birthdays and group dinners with traditional Italian
             menus and a deep Italian and Kos wine list.
           </p>
         </div>
-        <a class="btn btn-primary" href="#reservations">Plan an event</a>
+        <a class="btn btn-primary" href="#reservations" data-i18n="events_cta">Plan an event</a>
       </section>
 
       <section id="reservations" class="section reservations" data-reveal>
         <div class="reservation-card">
           <div>
-            <p class="section-eyebrow">Reservations</p>
-            <h2>Reserve a table</h2>
-            <p>
+            <p class="section-eyebrow" data-i18n="reservations_eyebrow">Reservations</p>
+            <h2 data-i18n="reservations_title">Reserve a table</h2>
+            <p data-i18n="reservations_body">
               We are currently closed and reopen on 1 May. From then on we are
               open every day except Tuesday from 17:00 until 01:00, with the
               kitchen serving until 23:00. Walk-ins are welcome, but weekend
@@ -508,37 +544,72 @@
           </div>
           <form class="reservation-form" id="reservation-form">
             <label>
-              Name
-              <input type="text" name="name" placeholder="Your name" required />
+              <span data-i18n="form_label_name">Name</span>
+              <input
+                type="text"
+                name="name"
+                placeholder="Your name"
+                data-i18n-placeholder="form_placeholder_name"
+                required
+              />
             </label>
             <label>
-              Email
-              <input type="email" name="email" placeholder="you@email.com" required />
+              <span data-i18n="form_label_email">Email</span>
+              <input
+                type="email"
+                name="email"
+                placeholder="you@email.com"
+                data-i18n-placeholder="form_placeholder_email"
+                required
+              />
             </label>
             <label>
-              Phone (with country code)
-              <input type="tel" name="phone" placeholder="+30 690 000 0000" required />
+              <span data-i18n="form_label_phone">Phone (with country code)</span>
+              <input
+                type="tel"
+                name="phone"
+                placeholder="+30 690 000 0000"
+                data-i18n-placeholder="form_placeholder_phone"
+                required
+              />
             </label>
             <label>
-              Date
+              <span data-i18n="form_label_date">Date</span>
               <input type="date" name="date" required />
             </label>
             <label>
-              Time
+              <span data-i18n="form_label_time">Time</span>
               <input type="time" name="time" min="17:00" max="23:00" required />
-              <span class="field-note">17:00 - 23:00 (closed Tuesday)</span>
+              <span class="field-note" data-i18n="form_time_note">17:00 - 23:00 (closed Tuesday)</span>
             </label>
             <label>
-              Guests
-              <input type="number" name="guests" min="1" max="12" placeholder="2" required />
+              <span data-i18n="form_label_guests">Guests</span>
+              <input
+                type="number"
+                name="guests"
+                min="1"
+                max="12"
+                placeholder="2"
+                data-i18n-placeholder="form_placeholder_guests"
+                required
+              />
             </label>
             <label class="full">
-              Special requests (optional)
-              <textarea name="notes" rows="3" placeholder="Allergies, celebrations, seating preferences"></textarea>
+              <span data-i18n="form_label_requests">Special requests (optional)</span>
+              <textarea
+                name="notes"
+                rows="3"
+                placeholder="Allergies, celebrations, seating preferences"
+                data-i18n-placeholder="form_placeholder_requests"
+              ></textarea>
             </label>
             <input type="text" name="website" class="hidden-field" tabindex="-1" autocomplete="off" />
-            <button class="btn btn-primary full" type="submit">Request booking</button>
-            <p class="form-note">Reopens 1 May. We will confirm by email. Closed on Tuesdays.</p>
+            <button class="btn btn-primary full" type="submit" data-i18n="form_button_submit">
+              Request booking
+            </button>
+            <p class="form-note" data-i18n="form_note">
+              Reopens 1 May. We will confirm by email. Closed on Tuesdays.
+            </p>
             <div class="form-status" role="status" aria-live="polite"></div>
           </form>
         </div>
@@ -547,21 +618,23 @@
       <section id="visit" class="section visit" data-reveal>
         <div class="visit-card">
           <div>
-            <p class="section-eyebrow">Visit Barolo</p>
-            <h2>Vasileos Georgiou V' 26, Kos 853 00, Greece</h2>
-            <p>Just across the street from the sea in Kos. Currently closed, reopening 1 May.</p>
+            <p class="section-eyebrow" data-i18n="visit_eyebrow">Visit Barolo</p>
+            <h2 data-i18n="visit_title">Vasileos Georgiou V' 26, Kos 853 00, Greece</h2>
+            <p data-i18n="visit_body">
+              Just across the street from the sea in Kos. Currently closed, reopening 1 May.
+            </p>
             <div class="visit-details">
               <div>
-                <span>Open</span>
-                <strong>From 1 May, 17:00 - 01:00</strong>
+                <span data-i18n="visit_open_label">Open</span>
+                <strong data-i18n="visit_open_value">From 1 May, 17:00 - 01:00</strong>
               </div>
               <div>
-                <span>Kitchen</span>
-                <strong>17:00 - 23:00</strong>
+                <span data-i18n="visit_kitchen_label">Kitchen</span>
+                <strong data-i18n="visit_kitchen_value">17:00 - 23:00</strong>
               </div>
               <div>
-                <span>Closed</span>
-                <strong>Tuesday</strong>
+                <span data-i18n="visit_closed_label">Closed</span>
+                <strong data-i18n="visit_closed_value">Tuesday</strong>
               </div>
             </div>
           </div>
@@ -580,14 +653,14 @@
 
     <footer class="footer">
       <div>
-        <span>Contact us</span>
+        <span data-i18n="footer_contact_label">Contact us</span>
         <p>Barolo Wine Bar Restaurant</p>
         <p>Vasileos Georgiou V' 26, Kos 853 00, Greece</p>
         <p>+302242028047</p>
-        <p>Open 17:00 - 01:00 (closed Tuesday)</p>
-        <p>Kitchen until 23:00</p>
+        <p data-i18n="footer_open">Open 17:00 - 01:00 (closed Tuesday)</p>
+        <p data-i18n="footer_kitchen">Kitchen until 23:00</p>
         <p>info@barolokos.com</p>
-        <span class="footer-follow-label">Follow us</span>
+        <span class="footer-follow-label" data-i18n="footer_follow_label">Follow us</span>
         <p>
           <a class="footer-link social-link" href="https://instagram.com/barolo_kos" target="_blank" rel="noreferrer">
             <span class="social-icon">
@@ -613,8 +686,10 @@
         <div class="logo footer-login-logo" aria-label="Barolo logo">
           <img src="BAROLO_LOGO_VER1_fixed_transparent_6x.png" alt="Barolo logo" />
         </div>
-        <a class="btn btn-small" href="/admin.html">Login</a>
-        <p class="footer-copy">© 2026 Barolo Wine Bar &amp; Restaurant. All rights reserved.</p>
+        <a class="btn btn-small" href="/admin.html" data-i18n="footer_login">Login</a>
+        <p class="footer-copy" data-i18n="footer_copy">
+          © 2026 Barolo Wine Bar &amp; Restaurant. All rights reserved.
+        </p>
       </div>
     </footer>
 

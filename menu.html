@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Barolo | Menu</title>
+    <title data-i18n="menu_page_title">Barolo | Menu</title>
     <meta
       name="description"
       content="The Barolo menu for 2026 is in progress. Full menu coming soon."
@@ -43,10 +43,24 @@
   <body class="menu-page">
     <div class="page-texture" aria-hidden="true"></div>
     <header class="hero">
-      <div class="admin-header">
+      <div class="admin-header simple-header">
         <div class="logo admin-logo" aria-label="Barolo logo">
           <img src="BAROLO_LOGO_VER1_fixed_transparent_6x.png" alt="Barolo logo" />
         </div>
+        <button
+          class="lang-toggle"
+          type="button"
+          role="switch"
+          aria-checked="false"
+          aria-label="Toggle language"
+          data-lang-toggle
+        >
+          <span class="lang-toggle-label lang-toggle-label-en">EN</span>
+          <span class="lang-toggle-track" aria-hidden="true">
+            <span class="lang-toggle-thumb"></span>
+          </span>
+          <span class="lang-toggle-label lang-toggle-label-el">GR</span>
+        </button>
       </div>
     </header>
 
@@ -54,14 +68,14 @@
       <section class="section" data-reveal>
         <div class="section-header">
           <div>
-            <p class="section-eyebrow">Menu</p>
-            <h2>Menu for 2026 is in progress</h2>
-            <p>
+            <p class="section-eyebrow" data-i18n="menu_page_eyebrow">Menu</p>
+            <h2 data-i18n="menu_page_heading">Menu for 2026 is in progress</h2>
+            <p data-i18n="menu_page_body">
               Our full menu will be published soon. For now, please ask our team
               on arrival and we will guide you through the daily selections.
             </p>
           </div>
-          <a class="btn btn-small" href="/index.html">Back to home</a>
+          <a class="btn btn-small" href="/index.html" data-i18n="menu_page_back">Back to home</a>
         </div>
       </section>
     </main>
@@ -73,14 +87,14 @@
         </div>
       </div>
       <div>
-        <span>Contact</span>
+        <span data-i18n="footer_contact_label">Contact us</span>
         <p>Barolo Wine Bar Restaurant</p>
         <p>Vasileos Georgiou V' 26, Kos 853 00, Greece</p>
         <p>+302242028047</p>
-        <p>Open 17:00 - 01:00 (closed Tuesday)</p>
-        <p>Kitchen until 23:00</p>
+        <p data-i18n="footer_open">Open 17:00 - 01:00 (closed Tuesday)</p>
+        <p data-i18n="footer_kitchen">Kitchen until 23:00</p>
         <p>info@barolokos.com</p>
-        <span class="footer-follow-label">Follow us</span>
+        <span class="footer-follow-label" data-i18n="footer_follow_label">Follow us</span>
         <p>
           <a class="footer-link social-link" href="https://instagram.com/barolo_kos" target="_blank" rel="noreferrer">
             <span class="social-icon">
@@ -106,8 +120,10 @@
         <div class="logo footer-login-logo" aria-label="Barolo logo">
           <img src="BAROLO_LOGO_VER1_fixed_transparent_6x.png" alt="Barolo logo" />
         </div>
-        <a class="btn btn-small" href="/admin.html">Login</a>
-        <p class="footer-copy">© 2026 Barolo Wine Bar &amp; Restaurant. All rights reserved.</p>
+        <a class="btn btn-small" href="/admin.html" data-i18n="footer_login">Login</a>
+        <p class="footer-copy" data-i18n="footer_copy">
+          © 2026 Barolo Wine Bar &amp; Restaurant. All rights reserved.
+        </p>
       </div>
     </footer>
 

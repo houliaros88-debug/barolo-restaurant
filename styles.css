@@ -84,7 +84,8 @@ footer {
 }
 
 .hero-banner-overlay .logo,
-.hero-banner-overlay .nav-toggle {
+.hero-banner-overlay .nav-toggle,
+.hero-banner-overlay .lang-toggle {
   pointer-events: auto;
 }
 
@@ -102,6 +103,13 @@ footer {
 }
 
 .hero-banner-overlay .nav-toggle {
+  margin-right: 0;
+}
+
+.hero-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   margin-right: var(--page-pad);
 }
 
@@ -177,6 +185,86 @@ body.nav-open .nav-links {
   height: 2px;
   background: var(--ink);
   display: block;
+}
+
+.lang-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 999px;
+  border: 1px solid rgba(47, 34, 29, 0.3);
+  background: rgba(255, 255, 255, 0.85);
+  color: var(--ink);
+  padding: 4px 8px;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.lang-toggle:focus-visible {
+  outline: 2px solid rgba(47, 34, 29, 0.4);
+  outline-offset: 2px;
+}
+
+.lang-toggle-label {
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  opacity: 0.6;
+}
+
+[data-lang="en"] .lang-toggle-label-en {
+  opacity: 1;
+}
+
+[data-lang="el"] .lang-toggle-label-el {
+  opacity: 1;
+}
+
+.lang-toggle-track {
+  width: 30px;
+  height: 16px;
+  border-radius: 999px;
+  background: rgba(47, 34, 29, 0.2);
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.lang-toggle-thumb {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--ink);
+  position: absolute;
+  left: 2px;
+  transition: transform 0.2s ease;
+}
+
+[data-lang="el"] .lang-toggle-thumb {
+  transform: translateX(14px);
+}
+
+.hero-banner-overlay .lang-toggle {
+  border-color: rgba(255, 255, 255, 0.6);
+  background: rgba(0, 0, 0, 0.35);
+  color: #fff;
+}
+
+.hero-banner-overlay .lang-toggle-track {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.hero-banner-overlay .lang-toggle-thumb {
+  background: #fff;
+}
+
+.simple-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px var(--page-pad) 0;
+  gap: 12px;
 }
 
 .btn {
