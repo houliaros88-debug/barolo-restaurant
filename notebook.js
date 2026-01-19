@@ -214,4 +214,17 @@ categoryButtons.forEach((button) => {
 });
 
 setActiveCategory(currentCategory, false);
-loadNotes();
+
+if (getPasskey()) {
+  loadNotes();
+} else {
+  document.addEventListener(
+    'notebook:unlock',
+    () => {
+      if (getPasskey()) {
+        loadNotes();
+      }
+    },
+    { once: true }
+  );
+}

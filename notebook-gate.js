@@ -14,15 +14,8 @@ const setGateStatus = (message, state) => {
   gateStatus.dataset.state = state || '';
 };
 
-const loadNotebookScript = () => {
-  if (document.querySelector('script[data-notebook-script]')) {
-    return;
-  }
-  const script = document.createElement('script');
-  script.src = 'notebook.js';
-  script.defer = true;
-  script.dataset.notebookScript = 'true';
-  document.body.appendChild(script);
+const announceUnlock = () => {
+  document.dispatchEvent(new CustomEvent('notebook:unlock'));
 };
 
 const unlockNotebook = () => {
@@ -32,7 +25,7 @@ const unlockNotebook = () => {
   if (gate) {
     gate.hidden = true;
   }
-  loadNotebookScript();
+  announceUnlock();
 };
 
 const submitPasskey = async () => {
@@ -74,7 +67,7 @@ const submitPasskey = async () => {
 };
 
 if (!gate || !mainContent) {
-  loadNotebookScript();
+  announceUnlock();
 } else if (
   sessionStorage.getItem(STORAGE_KEY) === '1' &&
   sessionStorage.getItem(PASSKEY_KEY)
