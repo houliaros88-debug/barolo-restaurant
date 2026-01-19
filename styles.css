@@ -425,6 +425,10 @@ body.nav-open .nav-links {
   padding-top: 0;
 }
 
+.section-tight-top-sm {
+  padding-top: 24px;
+}
+
 .section-tight-bottom {
   padding-bottom: 0;
 }
@@ -1414,6 +1418,10 @@ body.nav-open .nav-links {
 
   .section-tight-top {
     padding-top: 0;
+  }
+
+  .section-tight-top-sm {
+    padding-top: 16px;
   }
 
   .section-tight-bottom {
