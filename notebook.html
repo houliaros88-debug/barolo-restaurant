@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Barolo | Admin Notebook</title>
+    <meta name="robots" content="noindex" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700&family=Work+Sans:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="admin-page">
+    <div class="page-texture" aria-hidden="true"></div>
+    <header class="hero admin-hero">
+      <div class="admin-header">
+        <div class="logo admin-logo" aria-label="Barolo logo">
+          <img src="BAROLO_LOGO_VER1_fixed_transparent_6x.png" alt="Barolo logo" />
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="section admin-panel">
+        <div class="admin-auth" id="admin-auth">
+          <div class="admin-card">
+            <p class="section-eyebrow">Admin login</p>
+            <label class="admin-label">
+              Email
+              <input type="email" id="admin-email" placeholder="you@email.com" autocomplete="email" />
+            </label>
+            <label class="admin-label">
+              Password
+              <input
+                type="password"
+                id="admin-password"
+                placeholder="Enter password"
+                autocomplete="current-password"
+              />
+            </label>
+            <button class="btn btn-primary" id="admin-login" type="button">Log in</button>
+            <div class="admin-status" id="admin-auth-status" role="status" aria-live="polite"></div>
+          </div>
+        </div>
+        <div class="admin-content" id="admin-content" hidden>
+          <div class="admin-top">
+            <div class="admin-now" id="admin-now">—</div>
+            <div class="admin-user" id="admin-user" hidden></div>
+          </div>
+          <div class="admin-pages">
+            <a class="admin-page-link" href="/admin.html">Bookings</a>
+            <a class="admin-page-link is-active" href="/notebook.html" aria-current="page">Notebook</a>
+          </div>
+          <p class="admin-hint">Shared notes for the team.</p>
+          <section class="admin-notebook" aria-label="Notebook">
+            <div class="admin-notebook-header">
+              <p class="section-eyebrow">Notebook</p>
+            </div>
+            <div class="admin-notebook-input">
+              <input
+                type="text"
+                id="note-input"
+                placeholder="Write a note for the team"
+                autocomplete="off"
+              />
+              <button class="btn btn-small" id="note-add" type="button">Add note</button>
+            </div>
+            <div class="admin-notes-status" id="notes-status" role="status" aria-live="polite"></div>
+            <div class="admin-notes-list" id="notes-list"></div>
+          </section>
+          <div class="admin-status" id="admin-status" role="status" aria-live="polite"></div>
+          <div class="admin-controls">
+            <div class="admin-controls-stack">
+              <button class="btn btn-ghost" id="admin-logout" type="button">Log out</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      window.BAROLO_SUPABASE = {
+        url: "https://crbvamfvaikadhnfolgo.supabase.co",
+        anonKey: "sb_publishable_nCW5sikLAB4kS7YdHV830w_Uw_0hfFm",
+      };
+    </script>
+    <script src="admin.js" defer></script>
+  </body>
+</html>

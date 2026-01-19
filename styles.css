@@ -900,6 +900,38 @@ body.nav-open .nav-links {
   opacity: 0.7;
 }
 
+.admin-pages {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding: 6px;
+  border-radius: 999px;
+  border: 1px solid rgba(47, 34, 29, 0.12);
+  background: #fff;
+}
+
+.admin-page-link {
+  text-decoration: none;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink);
+  padding: 6px 12px;
+  border-radius: 999px;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.admin-page-link.is-active {
+  background: var(--ink);
+  color: #fff;
+}
+
+.admin-page-link:focus-visible {
+  outline: 2px solid rgba(47, 34, 29, 0.4);
+  outline-offset: 2px;
+}
+
 .admin-controls a.btn {
   text-decoration: none;
 }

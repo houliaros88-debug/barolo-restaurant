@@ -46,6 +46,8 @@ const infoEmail = document.querySelector('#info-email');
 const infoPhone = document.querySelector('#info-phone');
 const infoNotes = document.querySelector('#info-notes');
 const infoCreated = document.querySelector('#info-created');
+const hasBookingsUI = Boolean(tableBody);
+const hasNotesUI = Boolean(notesList);
 
 let allBookings = [];
 let visibleBookings = [];
@@ -686,6 +688,9 @@ const closeAllMenus = () => {
 };
 
 const loadBookings = async () => {
+  if (!hasBookingsUI) {
+    return;
+  }
   const token = await getAccessToken();
   if (!token) {
     setAuthStatus('Please log in to load bookings.', 'error');
@@ -900,9 +905,9 @@ const saveReservation = async () => {
       allBookings = [booking, ...allBookings];
     }
     applyFilters();
-  resetForm();
-  hideForm();
-  setFormStatus('Saved.', 'success');
+    resetForm();
+    hideForm();
+    setFormStatus('Saved.', 'success');
   } catch (error) {
     setFormStatus(error.message || 'Could not save reservation.', 'error');
   }
@@ -938,8 +943,12 @@ const login = async () => {
   toggleAdmin(true);
   updateAdminUser(session.access_token);
   setAuthStatus('', '');
-  loadBookings();
-  loadNotes();
+  if (hasBookingsUI) {
+    loadBookings();
+  }
+  if (hasNotesUI) {
+    loadNotes();
+  }
 };
 
 const logout = () => {
@@ -1167,9 +1176,13 @@ if (!config.url || !config.anonKey) {
   refreshSession().then((session) => {
     if (session) {
       setAuthStatus('', '');
-      loadBookings();
-      loadNotes();
-      hideForm();
+      if (hasBookingsUI) {
+        loadBookings();
+        hideForm();
+      }
+      if (hasNotesUI) {
+        loadNotes();
+      }
     }
   });
 }
