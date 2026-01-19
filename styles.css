@@ -422,7 +422,11 @@ body.nav-open .nav-links {
 }
 
 .section-tight-top {
-  padding-top: 40px;
+  padding-top: 0;
+}
+
+.section-tight-bottom {
+  padding-bottom: 0;
 }
 
 .section-header {
@@ -1409,7 +1413,11 @@ body.nav-open .nav-links {
   }
 
   .section-tight-top {
-    padding-top: 32px;
+    padding-top: 0;
+  }
+
+  .section-tight-bottom {
+    padding-bottom: 0;
   }
 
   .section-header {
