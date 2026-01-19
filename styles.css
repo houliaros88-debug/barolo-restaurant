@@ -616,7 +616,7 @@ body.nav-open .nav-links {
   gap: 20px;
   align-items: center;
   border: 1px solid rgba(47, 34, 29, 0.1);
-  padding: 32px var(--page-pad);
+  padding: 40px calc(var(--page-pad) + 8px);
 }
 
 .reservations {
