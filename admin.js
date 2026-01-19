@@ -14,6 +14,10 @@ const exportButton = document.querySelector('#export-bookings');
 const adminNow = document.querySelector('#admin-now');
 const adminGreeting = document.querySelector('#admin-greeting');
 const adminUser = document.querySelector('#admin-user');
+const noteInput = document.querySelector('#note-input');
+const noteAddButton = document.querySelector('#note-add');
+const notesList = document.querySelector('#notes-list');
+const notesStatus = document.querySelector('#notes-status');
 const datePrevButton = document.querySelector('#date-prev');
 const dateNextButton = document.querySelector('#date-next');
 const dateDisplay = document.querySelector('#date-display');
@@ -48,6 +52,7 @@ let visibleBookings = [];
 let editingId = null;
 let currentSession = null;
 let cachedUserLabel = null;
+let notes = [];
 let infoBookingId = null;
 let selectedDate = new Date();
 
@@ -88,6 +93,14 @@ const setFormStatus = (message, state) => {
   }
   formStatus.textContent = message;
   formStatus.dataset.state = state || '';
+};
+
+const setNotesStatus = (message, state) => {
+  if (!notesStatus) {
+    return;
+  }
+  notesStatus.textContent = message;
+  notesStatus.dataset.state = state || '';
 };
 
 const escapeHtml = (value) =>
@@ -308,6 +321,152 @@ const updateAdminUser = async (token) => {
   }
 };
 
+const renderNotes = () => {
+  if (!notesList) {
+    return;
+  }
+  notesList.textContent = '';
+  if (!notes.length) {
+    const empty = document.createElement('div');
+    empty.textContent = 'No notes yet.';
+    empty.className = 'admin-hint';
+    notesList.appendChild(empty);
+    return;
+  }
+  notes.forEach((note) => {
+    const item = document.createElement('label');
+    item.className = `admin-note${note.done ? ' done' : ''}`;
+
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.checked = Boolean(note.done);
+    checkbox.addEventListener('change', () => {
+      updateNote(note.id, checkbox.checked);
+    });
+
+    const text = document.createElement('span');
+    text.className = 'admin-note-text';
+    text.textContent = note.text;
+
+    item.appendChild(checkbox);
+    item.appendChild(text);
+    notesList.appendChild(item);
+  });
+};
+
+const loadNotes = async () => {
+  if (!notesList) {
+    return;
+  }
+  setNotesStatus('Loading notes...', 'loading');
+  const token = await getAccessToken();
+  if (!token) {
+    setNotesStatus('Please log in to view notes.', 'error');
+    return;
+  }
+  try {
+    const response = await fetch('/api/notes', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.error || 'Failed to load notes.');
+    }
+    notes = Array.isArray(data.notes) ? data.notes : [];
+    renderNotes();
+    setNotesStatus('', '');
+  } catch (error) {
+    setNotesStatus(error.message || 'Failed to load notes.', 'error');
+  }
+};
+
+const addNote = async () => {
+  if (!noteInput) {
+    return;
+  }
+  const text = noteInput.value.trim();
+  if (!text) {
+    setNotesStatus('Please enter a note.', 'error');
+    return;
+  }
+  const token = await getAccessToken();
+  if (!token) {
+    setNotesStatus('Please log in to add notes.', 'error');
+    return;
+  }
+  setNotesStatus('Saving note...', 'loading');
+  if (noteAddButton) {
+    noteAddButton.disabled = true;
+  }
+  try {
+    const response = await fetch('/api/notes', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ text }),
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.error || 'Failed to save note.');
+    }
+    const created = data.note;
+    if (created) {
+      notes = [created, ...notes];
+      renderNotes();
+    } else {
+      loadNotes();
+    }
+    noteInput.value = '';
+    setNotesStatus('', '');
+  } catch (error) {
+    setNotesStatus(error.message || 'Failed to save note.', 'error');
+  } finally {
+    if (noteAddButton) {
+      noteAddButton.disabled = false;
+    }
+  }
+};
+
+const updateNote = async (id, done) => {
+  const token = await getAccessToken();
+  if (!token) {
+    setNotesStatus('Please log in to update notes.', 'error');
+    return;
+  }
+  const previous = notes.find((note) => note.id === id);
+  notes = notes.map((note) => (note.id === id ? { ...note, done } : note));
+  renderNotes();
+  try {
+    const response = await fetch('/api/notes', {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ id, done }),
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.error || 'Failed to update note.');
+    }
+    if (data.note) {
+      notes = notes.map((note) => (note.id === id ? data.note : note));
+      renderNotes();
+    }
+    setNotesStatus('', '');
+  } catch (error) {
+    if (previous) {
+      notes = notes.map((note) => (note.id === id ? previous : note));
+      renderNotes();
+    }
+    setNotesStatus(error.message || 'Failed to update note.', 'error');
+  }
+};
+
 const saveSession = (session) => {
   currentSession = session;
   if (session) {
@@ -381,6 +540,9 @@ const refreshSession = async () => {
   saveSession(null);
   toggleAdmin(false);
   setAdminUser(null);
+  notes = [];
+  renderNotes();
+  setNotesStatus('', '');
   return null;
 };
 
@@ -777,16 +939,20 @@ const login = async () => {
   updateAdminUser(session.access_token);
   setAuthStatus('', '');
   loadBookings();
+  loadNotes();
 };
 
 const logout = () => {
   saveSession(null);
   allBookings = [];
   visibleBookings = [];
+  notes = [];
   renderRows([], []);
   resetForm();
   hideForm();
   setStatus('', '');
+  renderNotes();
+  setNotesStatus('', '');
   setAdminUser(null);
   toggleAdmin(false);
 };
@@ -829,6 +995,19 @@ if (loginButton) {
 
 if (openAddButton) {
   openAddButton.addEventListener('click', openAddReservation);
+}
+
+if (noteAddButton) {
+  noteAddButton.addEventListener('click', addNote);
+}
+
+if (noteInput) {
+  noteInput.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      addNote();
+    }
+  });
 }
 
 if (closeInfoButton) {
@@ -989,6 +1168,7 @@ if (!config.url || !config.anonKey) {
     if (session) {
       setAuthStatus('', '');
       loadBookings();
+      loadNotes();
       hideForm();
     }
   });

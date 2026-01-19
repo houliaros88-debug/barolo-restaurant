@@ -59,6 +59,22 @@
             </div>
           </div>
           <p class="admin-greeting" id="admin-greeting">Welcome Barolo team.</p>
+          <section class="admin-notebook" aria-label="Notebook">
+            <div class="admin-notebook-header">
+              <p class="section-eyebrow">Notebook</p>
+            </div>
+            <div class="admin-notebook-input">
+              <input
+                type="text"
+                id="note-input"
+                placeholder="Write a note for the team"
+                autocomplete="off"
+              />
+              <button class="btn btn-small" id="note-add" type="button">Add note</button>
+            </div>
+            <div class="admin-notes-status" id="notes-status" role="status" aria-live="polite"></div>
+            <div class="admin-notes-list" id="notes-list"></div>
+          </section>
           <div class="admin-filters">
             <div class="admin-date-nav">
               <button class="btn btn-ghost" id="date-prev" type="button" aria-label="Previous day">←</button>
