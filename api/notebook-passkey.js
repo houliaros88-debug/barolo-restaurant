@@ -55,5 +55,6 @@ module.exports = async (req, res) => {
     return;
   }
 
+  res.setHeader('Set-Cookie', `barolo_notebook_passkey=${encodeURIComponent(passkey)}; path=/; SameSite=Lax`);
   sendJson(res, 200, { ok: true });
 };

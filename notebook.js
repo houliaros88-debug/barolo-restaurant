@@ -9,6 +9,7 @@ const mainContent = document.querySelector('main');
 
 const PASSKEY_KEY = 'barolo-notebook-passkey';
 const OK_KEY = 'barolo-notebook-passkey-ok';
+const PASSKEY_COOKIE = 'barolo_notebook_passkey';
 const CATEGORY_KEY = 'barolo-notebook-category';
 const CATEGORIES = ['barolo', 'harem'];
 const savedCategory = sessionStorage.getItem(CATEGORY_KEY);
@@ -24,7 +25,13 @@ const setNotesStatus = (message, state) => {
   notesStatus.dataset.state = state || '';
 };
 
-const getPasskey = () => sessionStorage.getItem(PASSKEY_KEY) || '';
+const readCookie = (name) => {
+  const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const match = document.cookie.match(new RegExp(`(?:^|; )${escaped}=([^;]*)`));
+  return match ? decodeURIComponent(match[1]) : '';
+};
+
+const getPasskey = () => sessionStorage.getItem(PASSKEY_KEY) || readCookie(PASSKEY_COOKIE);
 
 const setActiveCategory = (category, shouldLoad = true) => {
   const nextCategory = CATEGORIES.includes(category) ? category : 'barolo';
@@ -78,15 +85,16 @@ const renderNotes = () => {
 
 const notebookFetch = async (path, options = {}) => {
   const passkey = getPasskey();
-  if (!passkey) {
-    throw new Error('Pass key missing. Unlock the notebook again.');
-  }
   const headers = {
-    'Content-Type': 'application/json',
     ...(options.headers || {}),
-    'x-notebook-passkey': passkey,
   };
-  return fetch(path, { ...options, headers });
+  if (options.body && !headers['Content-Type']) {
+    headers['Content-Type'] = 'application/json';
+  }
+  if (passkey) {
+    headers['x-notebook-passkey'] = passkey;
+  }
+  return fetch(path, { ...options, headers, credentials: 'same-origin' });
 };
 
 const loadNotes = async () => {
@@ -180,6 +188,7 @@ const updateNote = async (id, done) => {
 const lockNotebook = () => {
   sessionStorage.removeItem(PASSKEY_KEY);
   sessionStorage.removeItem(OK_KEY);
+  document.cookie = `${PASSKEY_COOKIE}=; Max-Age=0; path=/; SameSite=Lax`;
   notes = [];
   renderNotes();
   if (mainContent) {
@@ -215,15 +224,13 @@ categoryButtons.forEach((button) => {
 
 setActiveCategory(currentCategory, false);
 
-if (getPasskey()) {
+if (sessionStorage.getItem(OK_KEY) === '1') {
   loadNotes();
 } else {
   document.addEventListener(
     'notebook:unlock',
     () => {
-      if (getPasskey()) {
-        loadNotes();
-      }
+      loadNotes();
     },
     { once: true }
   );

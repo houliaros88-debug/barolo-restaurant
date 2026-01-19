@@ -5,6 +5,7 @@ const unlockButton = document.querySelector('#notebook-unlock');
 const gateStatus = document.querySelector('#notebook-gate-status');
 const STORAGE_KEY = 'barolo-notebook-passkey-ok';
 const PASSKEY_KEY = 'barolo-notebook-passkey';
+const PASSKEY_COOKIE = 'barolo_notebook_passkey';
 
 const setGateStatus = (message, state) => {
   if (!gateStatus) {
@@ -53,6 +54,7 @@ const submitPasskey = async () => {
     if (!response.ok) {
       throw new Error(data.error || 'Invalid pass key.');
     }
+    document.cookie = `${PASSKEY_COOKIE}=${encodeURIComponent(passkey)}; path=/; SameSite=Lax`;
     sessionStorage.setItem(STORAGE_KEY, '1');
     sessionStorage.setItem(PASSKEY_KEY, passkey);
     setGateStatus('', '');

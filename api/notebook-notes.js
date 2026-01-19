@@ -31,8 +31,26 @@ const parseBody = async (req) => {
   }
 };
 
-const getPasskey = (req, body) =>
-  String(req.headers['x-notebook-passkey'] || body?.passkey || '').trim();
+const readCookie = (value, name) => {
+  if (!value) {
+    return '';
+  }
+  const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const match = value.match(new RegExp(`(?:^|; )${escaped}=([^;]*)`));
+  return match ? decodeURIComponent(match[1]) : '';
+};
+
+const getPasskey = (req, body) => {
+  const headerValue = String(req.headers['x-notebook-passkey'] || '').trim();
+  if (headerValue) {
+    return headerValue;
+  }
+  const bodyValue = String(body?.passkey || '').trim();
+  if (bodyValue) {
+    return bodyValue;
+  }
+  return readCookie(req.headers.cookie || '', 'barolo_notebook_passkey');
+};
 
 const normalizeCategory = (value) => {
   const candidate = String(value || '').trim().toLowerCase();
