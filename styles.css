@@ -1153,6 +1153,10 @@ body.nav-open .nav-links {
   color: var(--sage);
 }
 
+.footer-follow-label {
+  margin-top: 12px;
+}
+
 .footer-copy {
   margin-top: 12px;
   font-size: 12px;
