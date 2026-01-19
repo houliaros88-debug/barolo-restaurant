@@ -787,6 +787,10 @@ body.nav-open .nav-links {
   max-width: none;
 }
 
+.admin-logo {
+  margin-left: var(--page-pad);
+}
+
 .admin-logo img {
   height: 160px;
 }
