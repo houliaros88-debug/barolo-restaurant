@@ -539,7 +539,7 @@ body.nav-open .nav-links {
   width: 100%;
   border-radius: var(--radius);
   box-shadow: var(--shadow);
-  height: 360px;
+  height: 420px;
   object-fit: cover;
 }
 
