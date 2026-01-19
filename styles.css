@@ -50,7 +50,7 @@ footer {
   width: 100vw;
   margin-left: 50%;
   transform: translateX(-50%);
-  height: 640px;
+  height: 680px;
   overflow: hidden;
   background: #fff;
 }
@@ -1308,7 +1308,7 @@ body.nav-open .nav-links {
 
 @media (max-width: 1024px) {
   .hero-banner {
-    height: 520px;
+    height: 560px;
   }
 
   .hero-grid,
@@ -1368,7 +1368,7 @@ body.nav-open .nav-links {
   }
 
   .hero-banner {
-    height: 380px;
+    height: 400px;
   }
 
   .hero-logo img {
