@@ -4,6 +4,7 @@ const passkeyInput = document.querySelector('#notebook-passkey');
 const unlockButton = document.querySelector('#notebook-unlock');
 const gateStatus = document.querySelector('#notebook-gate-status');
 const STORAGE_KEY = 'barolo-notebook-passkey-ok';
+const PASSKEY_KEY = 'barolo-notebook-passkey';
 
 const setGateStatus = (message, state) => {
   if (!gateStatus) {
@@ -13,14 +14,14 @@ const setGateStatus = (message, state) => {
   gateStatus.dataset.state = state || '';
 };
 
-const loadAdminScript = () => {
-  if (document.querySelector('script[data-admin-script]')) {
+const loadNotebookScript = () => {
+  if (document.querySelector('script[data-notebook-script]')) {
     return;
   }
   const script = document.createElement('script');
-  script.src = 'admin.js';
+  script.src = 'notebook.js';
   script.defer = true;
-  script.dataset.adminScript = 'true';
+  script.dataset.notebookScript = 'true';
   document.body.appendChild(script);
 };
 
@@ -31,7 +32,7 @@ const unlockNotebook = () => {
   if (gate) {
     gate.hidden = true;
   }
-  loadAdminScript();
+  loadNotebookScript();
 };
 
 const submitPasskey = async () => {
@@ -60,6 +61,7 @@ const submitPasskey = async () => {
       throw new Error(data.error || 'Invalid pass key.');
     }
     sessionStorage.setItem(STORAGE_KEY, '1');
+    sessionStorage.setItem(PASSKEY_KEY, passkey);
     setGateStatus('', '');
     unlockNotebook();
   } catch (error) {
@@ -72,8 +74,11 @@ const submitPasskey = async () => {
 };
 
 if (!gate || !mainContent) {
-  loadAdminScript();
-} else if (sessionStorage.getItem(STORAGE_KEY) === '1') {
+  loadNotebookScript();
+} else if (
+  sessionStorage.getItem(STORAGE_KEY) === '1' &&
+  sessionStorage.getItem(PASSKEY_KEY)
+) {
   unlockNotebook();
 } else {
   if (passkeyInput) {
