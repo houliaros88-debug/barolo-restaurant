@@ -14,7 +14,6 @@
   const notesPanel = document.querySelector('[data-admin-panel="notes"]');
 
   const PASSKEY_KEY = 'barolo-notebook-passkey';
-  const OK_KEY = 'barolo-notebook-passkey-ok';
   const PASSKEY_COOKIE = 'barolo_notebook_passkey';
   const CATEGORY_KEY = 'barolo-notebook-category';
   const CATEGORIES = ['barolo', 'harem'];
@@ -22,6 +21,7 @@
 
   let notes = [];
   let currentCategory = CATEGORIES.includes(savedCategory) ? savedCategory : 'barolo';
+  let isUnlocked = false;
 
   const setNotesStatus = (message, state) => {
   if (!notesStatus) {
@@ -49,7 +49,6 @@
 
   const clearPasskey = () => {
     sessionStorage.removeItem(PASSKEY_KEY);
-    sessionStorage.removeItem(OK_KEY);
     document.cookie = `${PASSKEY_COOKIE}=; Max-Age=0; path=/; SameSite=Lax`;
   };
 
@@ -60,6 +59,7 @@
   if (notesContent) {
     notesContent.hidden = true;
   }
+  isUnlocked = false;
   setNotebookEnabled(false);
   if (message) {
     setGateStatus(message, 'error');
@@ -73,6 +73,7 @@
   if (notesContent) {
     notesContent.hidden = false;
   }
+  isUnlocked = true;
   setGateStatus('', '');
   };
 
@@ -160,7 +161,7 @@
     if (!notesList) {
       return;
     }
-    if (sessionStorage.getItem(OK_KEY) !== '1') {
+    if (!isUnlocked) {
       setNotesStatus('', '');
       showGate('Enter the pass key to view notes.');
       return;
@@ -193,7 +194,7 @@
     if (!noteInput) {
       return;
     }
-    if (sessionStorage.getItem(OK_KEY) !== '1') {
+    if (!isUnlocked) {
       showGate('Enter the pass key to add notes.');
       return;
     }
@@ -240,7 +241,7 @@
   };
 
   const updateNote = async (id, done) => {
-    if (sessionStorage.getItem(OK_KEY) !== '1') {
+    if (!isUnlocked) {
       showGate('Enter the pass key to update notes.');
       return;
     }
@@ -302,7 +303,6 @@
       throw new Error(data.error || 'Invalid pass key.');
     }
     sessionStorage.setItem(PASSKEY_KEY, passkey);
-    sessionStorage.setItem(OK_KEY, '1');
     document.cookie = `${PASSKEY_COOKIE}=${encodeURIComponent(passkey)}; path=/; SameSite=Lax`;
     setGateStatus('', '');
     setNotebookEnabled(true);
@@ -349,7 +349,7 @@
 
   categoryButtons.forEach((button) => {
     button.addEventListener('click', () => {
-      if (!getPasskey()) {
+      if (!isUnlocked) {
         showGate('Enter the pass key to switch categories.');
         return;
       }
@@ -363,13 +363,8 @@
     if (!notesPanel || notesPanel.hidden) {
       return;
     }
-    if (sessionStorage.getItem(OK_KEY) === '1') {
-      setNotebookEnabled(true);
-      hideGate();
-      loadNotes();
-    } else {
-      showGate('Enter the pass key to unlock notes.');
-    }
+    isUnlocked = false;
+    showGate('Enter the pass key to unlock notes.');
   };
 
   document.addEventListener('admin:tab', (event) => {
