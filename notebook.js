@@ -14,6 +14,7 @@
   const notesPanel = document.querySelector('[data-admin-panel="notes"]');
 
   const PASSKEY_KEY = 'barolo-notebook-passkey';
+  const OK_KEY = 'barolo-notebook-passkey-ok';
   const PASSKEY_COOKIE = 'barolo_notebook_passkey';
   const CATEGORY_KEY = 'barolo-notebook-category';
   const CATEGORIES = ['barolo', 'harem'];
@@ -47,8 +48,9 @@
   const getPasskey = () => sessionStorage.getItem(PASSKEY_KEY) || readCookie(PASSKEY_COOKIE);
 
   const clearPasskey = () => {
-  sessionStorage.removeItem(PASSKEY_KEY);
-  document.cookie = `${PASSKEY_COOKIE}=; Max-Age=0; path=/; SameSite=Lax`;
+    sessionStorage.removeItem(PASSKEY_KEY);
+    sessionStorage.removeItem(OK_KEY);
+    document.cookie = `${PASSKEY_COOKIE}=; Max-Age=0; path=/; SameSite=Lax`;
   };
 
   const showGate = (message) => {
@@ -155,14 +157,14 @@
   };
 
   const loadNotes = async () => {
-  if (!notesList) {
-    return;
-  }
-  if (!getPasskey()) {
-    setNotesStatus('', '');
-    showGate('Enter the pass key to view notes.');
-    return;
-  }
+    if (!notesList) {
+      return;
+    }
+    if (sessionStorage.getItem(OK_KEY) !== '1') {
+      setNotesStatus('', '');
+      showGate('Enter the pass key to view notes.');
+      return;
+    }
   setNotesStatus('Loading notes...', 'loading');
   try {
     const response = await notebookFetch(
@@ -188,13 +190,13 @@
   };
 
   const addNote = async () => {
-  if (!noteInput) {
-    return;
-  }
-  if (!getPasskey()) {
-    showGate('Enter the pass key to add notes.');
-    return;
-  }
+    if (!noteInput) {
+      return;
+    }
+    if (sessionStorage.getItem(OK_KEY) !== '1') {
+      showGate('Enter the pass key to add notes.');
+      return;
+    }
   const text = noteInput.value.trim();
   if (!text) {
     setNotesStatus('Please enter a note.', 'error');
@@ -238,10 +240,10 @@
   };
 
   const updateNote = async (id, done) => {
-  if (!getPasskey()) {
-    showGate('Enter the pass key to update notes.');
-    return;
-  }
+    if (sessionStorage.getItem(OK_KEY) !== '1') {
+      showGate('Enter the pass key to update notes.');
+      return;
+    }
   const previous = notes.find((note) => note.id === id);
   notes = notes.map((note) => (note.id === id ? { ...note, done } : note));
   renderNotes();
@@ -300,6 +302,7 @@
       throw new Error(data.error || 'Invalid pass key.');
     }
     sessionStorage.setItem(PASSKEY_KEY, passkey);
+    sessionStorage.setItem(OK_KEY, '1');
     document.cookie = `${PASSKEY_COOKIE}=${encodeURIComponent(passkey)}; path=/; SameSite=Lax`;
     setGateStatus('', '');
     setNotebookEnabled(true);
@@ -360,7 +363,7 @@
     if (!notesPanel || notesPanel.hidden) {
       return;
     }
-    if (getPasskey()) {
+    if (sessionStorage.getItem(OK_KEY) === '1') {
       setNotebookEnabled(true);
       hideGate();
       loadNotes();
