@@ -7,7 +7,8 @@ const passkeyInput = document.querySelector('#notebook-passkey');
 const unlockButton = document.querySelector('#notebook-unlock');
 const gateStatus = document.querySelector('#notebook-gate-status');
 const gate = document.querySelector('#notebook-gate');
-const mainContent = document.querySelector('main');
+const notesContent = document.querySelector('#notebook-content');
+const notesPanel = document.querySelector('[data-admin-panel="notes"]');
 
 const PASSKEY_KEY = 'barolo-notebook-passkey';
 const PASSKEY_COOKIE = 'barolo_notebook_passkey';
@@ -48,11 +49,11 @@ const clearPasskey = () => {
 };
 
 const showGate = (message) => {
-  if (mainContent) {
-    mainContent.hidden = true;
-  }
   if (gate) {
     gate.hidden = false;
+  }
+  if (notesContent) {
+    notesContent.hidden = true;
   }
   setNotebookEnabled(false);
   if (message) {
@@ -61,11 +62,11 @@ const showGate = (message) => {
 };
 
 const hideGate = () => {
-  if (mainContent) {
-    mainContent.hidden = false;
-  }
   if (gate) {
     gate.hidden = true;
+  }
+  if (notesContent) {
+    notesContent.hidden = false;
   }
   setGateStatus('', '');
 };
@@ -177,7 +178,7 @@ const loadNotes = async () => {
     notes = Array.isArray(data.notes) ? data.notes : [];
     renderNotes();
     setNotesStatus('', '');
-    setGateStatus('', '');
+    hideGate();
   } catch (error) {
     setNotesStatus(error.message || 'Failed to load notes.', 'error');
   }
@@ -352,10 +353,23 @@ categoryButtons.forEach((button) => {
 
 setActiveCategory(currentCategory, false);
 
-if (getPasskey()) {
-  setNotebookEnabled(true);
-  hideGate();
-  loadNotes();
-} else {
-  showGate('Enter the pass key to unlock notes.');
-}
+const handleNotesTab = () => {
+  if (!notesPanel || notesPanel.hidden) {
+    return;
+  }
+  if (getPasskey()) {
+    setNotebookEnabled(true);
+    hideGate();
+    loadNotes();
+  } else {
+    showGate('Enter the pass key to unlock notes.');
+  }
+};
+
+document.addEventListener('admin:tab', (event) => {
+  if (event?.detail?.tab === 'notes') {
+    handleNotesTab();
+  }
+});
+
+handleNotesTab();

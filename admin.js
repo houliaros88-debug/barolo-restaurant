@@ -49,7 +49,8 @@ const infoPhone = document.querySelector('#info-phone');
 const infoNotes = document.querySelector('#info-notes');
 const infoCreated = document.querySelector('#info-created');
 const hasBookingsUI = Boolean(tableBody);
-const hasNotesUI = Boolean(notesList);
+const notesMode = document.body?.dataset.notesMode || 'admin';
+const hasNotesUI = Boolean(notesList) && notesMode !== 'passkey';
 
 let allBookings = [];
 let visibleBookings = [];
@@ -1076,11 +1077,11 @@ if (openAddButton) {
   openAddButton.addEventListener('click', openAddReservation);
 }
 
-if (noteAddButton) {
+if (noteAddButton && hasNotesUI) {
   noteAddButton.addEventListener('click', addNote);
 }
 
-if (noteInput) {
+if (noteInput && hasNotesUI) {
   noteInput.addEventListener('keydown', (event) => {
     if (event.key === 'Enter') {
       event.preventDefault();

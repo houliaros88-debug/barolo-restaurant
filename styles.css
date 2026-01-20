@@ -941,26 +941,10 @@ body.nav-open .nav-links {
   outline-offset: 2px;
 }
 
-.notebook-passkey {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  align-items: flex-end;
-  margin-bottom: 16px;
-}
-
-.notebook-passkey .admin-status {
-  flex-basis: 100%;
-}
-
 .notebook-gate {
-  position: fixed;
-  inset: 0;
-  background: rgba(47, 34, 29, 0.4);
   display: grid;
   place-items: center;
-  padding: 24px;
-  z-index: 30;
+  padding: 24px 0;
 }
 
 .notebook-gate[hidden] {
@@ -969,6 +953,20 @@ body.nav-open .nav-links {
 
 .notebook-gate-card {
   width: min(420px, 100%);
+}
+
+.notebook-content[hidden] {
+  display: none;
+}
+
+.admin-tab-panel[hidden] {
+  display: none;
+}
+
+.admin-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 16px;
 }
 
 .admin-controls a.btn {

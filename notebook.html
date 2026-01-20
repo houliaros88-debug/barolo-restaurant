@@ -5,68 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Barolo | Admin Notebook</title>
     <meta name="robots" content="noindex" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700&family=Work+Sans:wght@300;400;600&display=swap"
-      rel="stylesheet"
-    />
+    <meta http-equiv="refresh" content="0; url=/admin.html#notes" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body class="admin-page">
-    <div class="page-texture" aria-hidden="true"></div>
-    <header class="hero admin-hero">
-      <div class="admin-header">
-        <div class="logo admin-logo" aria-label="Barolo logo">
-          <img src="BAROLO_LOGO_VER1_fixed_transparent_6x.png" alt="Barolo logo" />
-        </div>
-      </div>
-    </header>
-
-    <div class="notebook-gate" id="notebook-gate">
-      <div class="admin-card notebook-gate-card">
-        <p class="section-eyebrow">Notebook access</p>
-        <label class="admin-label">
-          Pass key
-          <input type="password" id="notebook-passkey" placeholder="Enter pass key" autocomplete="off" />
-        </label>
-        <button class="btn btn-primary" id="notebook-unlock" type="button">Unlock</button>
-        <div class="admin-status" id="notebook-gate-status" role="status" aria-live="polite"></div>
-      </div>
-    </div>
-    <main hidden>
-      <section class="section admin-panel">
-        <div class="admin-pages">
-          <a class="admin-page-link" href="/admin.html">Bookings</a>
-          <a class="admin-page-link is-active" href="/notebook.html" aria-current="page">Notebook</a>
-        </div>
-        <p class="admin-hint">Shared notes for the team.</p>
-        <div class="admin-pages notebook-tabs" role="tablist" aria-label="Notebook categories">
-          <button class="admin-page-link is-active" type="button" data-category="barolo" aria-pressed="true">
-            Barolo
-          </button>
-          <button class="admin-page-link" type="button" data-category="harem" aria-pressed="false">
-            Harem
-          </button>
-        </div>
-        <section class="admin-notebook" aria-label="Notebook">
-          <div class="admin-notebook-header">
-            <p class="section-eyebrow">Notebook</p>
-          </div>
-          <div class="admin-notebook-input">
-            <input
-              type="text"
-              id="note-input"
-              placeholder="Write a note for the team"
-              autocomplete="off"
-            />
-            <button class="btn btn-small" id="note-add" type="button">Add note</button>
-          </div>
-          <div class="admin-notes-status" id="notes-status" role="status" aria-live="polite"></div>
-          <div class="admin-notes-list" id="notes-list"></div>
-        </section>
-      </section>
+    <main class="section" style="text-align:center;">
+      <p>Redirecting to the admin notebook...</p>
+      <p><a href="/admin.html#notes">Go to Admin Notes</a></p>
     </main>
-    <script src="notebook.js?v=4" defer></script>
   </body>
 </html>

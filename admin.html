@@ -13,7 +13,7 @@
     />
     <link rel="stylesheet" href="styles.css" />
   </head>
-  <body class="admin-page">
+  <body class="admin-page" data-notes-mode="passkey">
     <div class="page-texture" aria-hidden="true"></div>
     <header class="hero admin-hero">
       <div class="admin-header">
@@ -50,109 +50,152 @@
             <div class="admin-now" id="admin-now">—</div>
             <div class="admin-user" id="admin-user" hidden></div>
           </div>
-          <div class="admin-pages">
-            <a class="admin-page-link is-active" href="/admin.html" aria-current="page">Bookings</a>
-            <a class="admin-page-link" href="/notebook.html">Notebook</a>
+          <div class="admin-pages admin-tabs" role="tablist" aria-label="Admin sections">
+            <button class="admin-page-link is-active" type="button" data-admin-tab="bookings" aria-selected="true">
+              Bookings
+            </button>
+            <button class="admin-page-link" type="button" data-admin-tab="notes" aria-selected="false">
+              Notes
+            </button>
           </div>
-          <div class="admin-controls">
-            <button class="btn btn-primary" id="load-bookings" type="button">Bookings</button>
-            <button class="btn btn-small" id="open-add-reservation" type="button">Add reservation</button>
-            <div class="admin-controls-stack">
-              <button class="btn btn-ghost" id="admin-logout" type="button">Log out</button>
-              <button class="btn btn-small" id="export-bookings" type="button" disabled>Export CSV</button>
-            </div>
+          <div class="admin-actions">
+            <button class="btn btn-ghost" id="admin-logout" type="button">Log out</button>
           </div>
-          <p class="admin-greeting" id="admin-greeting">Welcome Barolo team.</p>
-          <div class="admin-filters">
-            <div class="admin-date-nav">
-              <button class="btn btn-ghost" id="date-prev" type="button" aria-label="Previous day">←</button>
-              <span class="admin-date-display" id="date-display">—</span>
-              <button class="btn btn-ghost" id="date-next" type="button" aria-label="Next day">→</button>
+          <div class="admin-tab-panel" data-admin-panel="bookings">
+            <div class="admin-controls">
+              <button class="btn btn-primary" id="load-bookings" type="button">Bookings</button>
+              <button class="btn btn-small" id="open-add-reservation" type="button">Add reservation</button>
+              <div class="admin-controls-stack">
+                <button class="btn btn-small" id="export-bookings" type="button" disabled>Export CSV</button>
+              </div>
             </div>
-            <div class="admin-date-picker">
-              <button class="btn btn-ghost" type="button" aria-label="Choose date">
-                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                  <path
-                    d="M7 2.75a.75.75 0 0 1 .75.75v1h8v-1a.75.75 0 0 1 1.5 0v1H19a2.25 2.25 0 0 1 2.25 2.25v11A2.25 2.25 0 0 1 19 20H5A2.25 2.25 0 0 1 2.75 17.75v-11A2.25 2.25 0 0 1 5 4.5h1.25v-1A.75.75 0 0 1 7 2.75ZM5 9.25h14V6.75a.75.75 0 0 0-.75-.75H5.75a.75.75 0 0 0-.75.75v2.5Zm0 1.5v7a.75.75 0 0 0 .75.75h12.5a.75.75 0 0 0 .75-.75v-7H5Z"
-                    fill="currentColor"
-                  />
-                </svg>
-              </button>
-              <input type="date" id="date-picker" aria-label="Choose date" />
+            <p class="admin-greeting" id="admin-greeting">Welcome Barolo team.</p>
+            <div class="admin-filters">
+              <div class="admin-date-nav">
+                <button class="btn btn-ghost" id="date-prev" type="button" aria-label="Previous day">←</button>
+                <span class="admin-date-display" id="date-display">—</span>
+                <button class="btn btn-ghost" id="date-next" type="button" aria-label="Next day">→</button>
+              </div>
+              <div class="admin-date-picker">
+                <button class="btn btn-ghost" type="button" aria-label="Choose date">
+                  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path
+                      d="M7 2.75a.75.75 0 0 1 .75.75v1h8v-1a.75.75 0 0 1 1.5 0v1H19a2.25 2.25 0 0 1 2.25 2.25v11A2.25 2.25 0 0 1 19 20H5A2.25 2.25 0 0 1 2.75 17.75v-11A2.25 2.25 0 0 1 5 4.5h1.25v-1A.75.75 0 0 1 7 2.75ZM5 9.25h14V6.75a.75.75 0 0 0-.75-.75H5.75a.75.75 0 0 0-.75.75v2.5Zm0 1.5v7a.75.75 0 0 0 .75.75h12.5a.75.75 0 0 0 .75-.75v-7H5Z"
+                      fill="currentColor"
+                    />
+                  </svg>
+                </button>
+                <input type="date" id="date-picker" aria-label="Choose date" />
+              </div>
             </div>
-          </div>
-          <div class="admin-status" id="admin-status" role="status" aria-live="polite"></div>
-          <div class="admin-form" id="admin-form" hidden>
-            <div class="admin-form-header">
-              <h3 id="form-title">Add reservation</h3>
-              <button class="btn btn-ghost" id="cancel-edit" type="button" hidden>Cancel edit</button>
+            <div class="admin-status" id="admin-status" role="status" aria-live="polite"></div>
+            <div class="admin-form" id="admin-form" hidden>
+              <div class="admin-form-header">
+                <h3 id="form-title">Add reservation</h3>
+                <button class="btn btn-ghost" id="cancel-edit" type="button" hidden>Cancel edit</button>
+              </div>
+              <div class="admin-form-grid">
+                <label class="admin-label">
+                  Name
+                  <input type="text" id="form-name" />
+                </label>
+                <label class="admin-label">
+                  Email
+                  <input type="email" id="form-email" />
+                </label>
+                <label class="admin-label">
+                  Phone
+                  <input type="tel" id="form-phone" />
+                </label>
+                <label class="admin-label">
+                  Date
+                  <input type="date" id="form-date" />
+                </label>
+                <label class="admin-label">
+                  Time
+                  <input type="time" id="form-time" />
+                </label>
+                <label class="admin-label">
+                  Guests
+                  <input type="number" id="form-guests" min="1" />
+                </label>
+                <label class="admin-label">
+                  Table
+                  <input type="text" id="form-table" placeholder="Optional" />
+                </label>
+                <label class="admin-label">
+                  Status
+                  <select id="form-status">
+                    <option value="pending">Pending</option>
+                    <option value="confirmed">Confirmed</option>
+                    <option value="seated">Seated</option>
+                    <option value="no_show">No show</option>
+                    <option value="cancelled">Cancelled</option>
+                  </select>
+                </label>
+                <label class="admin-label admin-label-full">
+                  Customer notes
+                  <textarea id="form-notes" rows="3" placeholder="Customer comments"></textarea>
+                </label>
+              </div>
+              <button class="btn btn-primary" id="save-reservation" type="button">Save reservation</button>
+              <div class="admin-status" id="form-status-message" role="status" aria-live="polite"></div>
             </div>
-            <div class="admin-form-grid">
-              <label class="admin-label">
-                Name
-                <input type="text" id="form-name" />
-              </label>
-              <label class="admin-label">
-                Email
-                <input type="email" id="form-email" />
-              </label>
-              <label class="admin-label">
-                Phone
-                <input type="tel" id="form-phone" />
-              </label>
-              <label class="admin-label">
-                Date
-                <input type="date" id="form-date" />
-              </label>
-              <label class="admin-label">
-                Time
-                <input type="time" id="form-time" />
-              </label>
-              <label class="admin-label">
-                Guests
-                <input type="number" id="form-guests" min="1" />
-              </label>
-              <label class="admin-label">
-                Table
-                <input type="text" id="form-table" placeholder="Optional" />
-              </label>
-              <label class="admin-label">
-                Status
-                <select id="form-status">
-                  <option value="pending">Pending</option>
-                  <option value="confirmed">Confirmed</option>
-                  <option value="seated">Seated</option>
-                  <option value="no_show">No show</option>
-                  <option value="cancelled">Cancelled</option>
-                </select>
-              </label>
-              <label class="admin-label admin-label-full">
-                Customer notes
-                <textarea id="form-notes" rows="3" placeholder="Customer comments"></textarea>
-              </label>
-            </div>
-            <button class="btn btn-primary" id="save-reservation" type="button">Save reservation</button>
-            <div class="admin-status" id="form-status-message" role="status" aria-live="polite"></div>
-          </div>
-          <div class="admin-table-wrap">
-            <table class="admin-table" id="bookings-table">
-              <thead>
-              <tr>
-                <th>Time</th>
-                <th>Guests</th>
-                <th>Name</th>
-                <th>Table</th>
-                <th>Status</th>
-                <th>Info</th>
-                <th>Actions</th>
-              </tr>
-              </thead>
-              <tbody>
+            <div class="admin-table-wrap">
+              <table class="admin-table" id="bookings-table">
+                <thead>
                 <tr>
-                  <td colspan="11" class="admin-empty">No bookings loaded yet.</td>
+                  <th>Time</th>
+                  <th>Guests</th>
+                  <th>Name</th>
+                  <th>Table</th>
+                  <th>Status</th>
+                  <th>Info</th>
+                  <th>Actions</th>
                 </tr>
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td colspan="11" class="admin-empty">No bookings loaded yet.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="admin-tab-panel" data-admin-panel="notes" hidden>
+            <p class="admin-hint">Shared notes for the team.</p>
+            <div class="notebook-gate" id="notebook-gate">
+              <div class="admin-card notebook-gate-card">
+                <p class="section-eyebrow">Notebook access</p>
+                <label class="admin-label">
+                  Pass key
+                  <input type="password" id="notebook-passkey" placeholder="Enter pass key" autocomplete="off" />
+                </label>
+                <button class="btn btn-primary" id="notebook-unlock" type="button">Unlock</button>
+                <div class="admin-status" id="notebook-gate-status" role="status" aria-live="polite"></div>
+              </div>
+            </div>
+            <div class="notebook-content" id="notebook-content" hidden>
+              <div class="admin-pages notebook-tabs" role="tablist" aria-label="Notebook categories">
+                <button class="admin-page-link is-active" type="button" data-category="barolo" aria-pressed="true">
+                  Barolo
+                </button>
+                <button class="admin-page-link" type="button" data-category="harem" aria-pressed="false">
+                  Harem
+                </button>
+              </div>
+              <section class="admin-notebook" aria-label="Notebook">
+                <div class="admin-notebook-header">
+                  <p class="section-eyebrow">Notebook</p>
+                </div>
+                <div class="admin-notebook-input">
+                  <input type="text" id="note-input" placeholder="Write a note for the team" autocomplete="off" />
+                  <button class="btn btn-small" id="note-add" type="button">Add note</button>
+                </div>
+                <div class="admin-notes-status" id="notes-status" role="status" aria-live="polite"></div>
+                <div class="admin-notes-list" id="notes-list"></div>
+              </section>
+            </div>
           </div>
         </div>
         <div class="admin-modal" id="info-modal" hidden>
@@ -198,5 +241,7 @@
       };
     </script>
     <script src="admin.js" defer></script>
+    <script src="admin-tabs.js" defer></script>
+    <script src="notebook.js" defer></script>
   </body>
 </html>
