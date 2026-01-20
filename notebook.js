@@ -2,10 +2,8 @@ const notesList = document.querySelector('#notes-list');
 const notesStatus = document.querySelector('#notes-status');
 const noteInput = document.querySelector('#note-input');
 const noteAddButton = document.querySelector('#note-add');
-const lockButton = document.querySelector('#notebook-lock');
 const categoryButtons = document.querySelectorAll('[data-category]');
 const passkeyInput = document.querySelector('#notebook-passkey');
-const unlockButton = document.querySelector('#notebook-unlock');
 const gateStatus = document.querySelector('#notebook-gate-status');
 
 const PASSKEY_KEY = 'barolo-notebook-passkey';
@@ -52,9 +50,6 @@ const setNotebookEnabled = (isEnabled) => {
   }
   if (noteAddButton) {
     noteAddButton.disabled = !isEnabled;
-  }
-  if (lockButton) {
-    lockButton.disabled = !isEnabled;
   }
   categoryButtons.forEach((button) => {
     button.disabled = !isEnabled;
@@ -265,9 +260,6 @@ const submitPasskey = async () => {
     return;
   }
   setGateStatus('Checking...', 'loading');
-  if (unlockButton) {
-    unlockButton.disabled = true;
-  }
   try {
     const response = await fetch('/api/notebook-passkey', {
       method: 'POST',
@@ -292,18 +284,8 @@ const submitPasskey = async () => {
     setNotebookEnabled(false);
     setGateStatus(error.message || 'Invalid pass key.', 'error');
   } finally {
-    if (unlockButton) {
-      unlockButton.disabled = false;
-    }
+    // no-op
   }
-};
-
-const lockNotebook = () => {
-  clearPasskey();
-  notes = [];
-  renderNotes();
-  setNotebookEnabled(false);
-  setGateStatus('Notebook locked. Enter the pass key again.', 'error');
 };
 
 if (noteAddButton) {
@@ -317,14 +299,6 @@ if (noteInput) {
       addNote();
     }
   });
-}
-
-if (lockButton) {
-  lockButton.addEventListener('click', lockNotebook);
-}
-
-if (unlockButton) {
-  unlockButton.addEventListener('click', submitPasskey);
 }
 
 if (passkeyInput) {

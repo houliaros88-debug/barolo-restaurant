@@ -33,9 +33,13 @@
         <div class="notebook-passkey">
           <label class="admin-label">
             Pass key
-            <input type="password" id="notebook-passkey" placeholder="Enter pass key" autocomplete="off" />
+            <input
+              type="password"
+              id="notebook-passkey"
+              placeholder="Enter pass key and press Enter"
+              autocomplete="off"
+            />
           </label>
-          <button class="btn btn-primary" id="notebook-unlock" type="button">Unlock</button>
           <div class="admin-status" id="notebook-gate-status" role="status" aria-live="polite"></div>
         </div>
         <div class="admin-pages notebook-tabs" role="tablist" aria-label="Notebook categories">
@@ -62,11 +66,6 @@
           <div class="admin-notes-status" id="notes-status" role="status" aria-live="polite"></div>
           <div class="admin-notes-list" id="notes-list"></div>
         </section>
-        <div class="admin-controls">
-          <div class="admin-controls-stack">
-            <button class="btn btn-ghost" id="notebook-lock" type="button">Lock notebook</button>
-          </div>
-        </div>
       </section>
     </main>
     <script src="notebook.js?v=3" defer></script>
