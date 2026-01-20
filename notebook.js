@@ -33,6 +33,7 @@
   const USER_MAP = {
     'houliaros@hotmail.com': { name: 'Georgios', color: 'blue' },
     'ahouliarou@hotmail.com': { name: 'Anna', color: 'pink' },
+    'dimitris-h@hotmail.com': { name: 'Parents', color: 'black' },
   };
 
   const NAME_COLORS = Object.values(USER_MAP).reduce((acc, entry) => {
