@@ -107,15 +107,24 @@ const setStatus = (message, state) => {
   status.dataset.state = state || '';
 };
 
-const setAdminUser = (label) => {
+const setAdminUser = (label, email) => {
   cachedUserLabel = label || null;
+  const normalizedEmail = email || null;
   if (label) {
     window.BAROLO_ADMIN_USER = label;
-    document.dispatchEvent(new CustomEvent('admin:user', { detail: { label } }));
   } else {
     delete window.BAROLO_ADMIN_USER;
-    document.dispatchEvent(new CustomEvent('admin:user', { detail: { label: null } }));
   }
+  if (normalizedEmail) {
+    window.BAROLO_ADMIN_EMAIL = normalizedEmail;
+  } else {
+    delete window.BAROLO_ADMIN_EMAIL;
+  }
+  document.dispatchEvent(
+    new CustomEvent('admin:user', {
+      detail: { label: label || null, email: normalizedEmail },
+    })
+  );
   if (!adminUser) {
     return;
   }
@@ -390,9 +399,10 @@ const updateAdminUser = async (token) => {
   }
   const user = await fetchAuthUser(token);
   const meta = user?.user_metadata || {};
-  const label = meta.full_name || meta.name || user?.email || null;
-  if (label) {
-    setAdminUser(label);
+  const email = user?.email || null;
+  const label = meta.full_name || meta.name || email || null;
+  if (label || email) {
+    setAdminUser(label || email, email);
   }
 };
 
@@ -614,7 +624,7 @@ const refreshSession = async () => {
 
   saveSession(null);
   toggleAdmin(false);
-  setAdminUser(null);
+  setAdminUser(null, null);
   notes = [];
   renderNotes();
   setNotesStatus('', '');
@@ -1036,7 +1046,7 @@ const logout = (shouldBroadcast = true) => {
   setStatus('', '');
   renderNotes();
   setNotesStatus('', '');
-  setAdminUser(null);
+  setAdminUser(null, null);
   toggleAdmin(false);
   if (shouldBroadcast) {
     broadcastLogout();

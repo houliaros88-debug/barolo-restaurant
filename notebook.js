@@ -23,10 +23,21 @@
   let currentCategory = CATEGORIES.includes(savedCategory) ? savedCategory : 'barolo';
   let isUnlocked = false;
   let currentAuthor = window.BAROLO_ADMIN_USER || '';
+  let currentEmail = window.BAROLO_ADMIN_EMAIL || '';
 
   document.addEventListener('admin:user', (event) => {
     currentAuthor = event?.detail?.label || '';
+    currentEmail = event?.detail?.email || '';
   });
+
+  const USER_MAP = {
+    'houliaros@hotmail.com': { name: 'Georgios', color: 'blue' },
+  };
+
+  const NAME_COLORS = Object.values(USER_MAP).reduce((acc, entry) => {
+    acc[entry.name] = entry.color;
+    return acc;
+  }, {});
 
   const NOTE_COLORS = ['#a23a2c', '#8a6b52', '#4f6f5f', '#3b6a8c', '#c27a3c', '#7a5c8c'];
 
@@ -39,12 +50,20 @@
     return Math.abs(hash);
   };
 
-  const getAuthorLabel = () => currentAuthor || 'Team';
-
-  const getAuthorColor = (label) => {
-    const safeLabel = String(label || 'Team');
-    return NOTE_COLORS[hashString(safeLabel) % NOTE_COLORS.length];
+  const getAuthorProfile = () => {
+    const email = String(currentEmail || '').toLowerCase();
+    if (email && USER_MAP[email]) {
+      return USER_MAP[email];
+    }
+    const label = currentAuthor || (email ? email.split('@')[0] : 'Team');
+    return {
+      name: label || 'Team',
+      color: NAME_COLORS[label] || NOTE_COLORS[hashString(label || 'Team') % NOTE_COLORS.length],
+    };
   };
+
+  const getAuthorColor = (label) =>
+    NAME_COLORS[label] || NOTE_COLORS[hashString(String(label || 'Team')) % NOTE_COLORS.length];
 
   const setNotesStatus = (message, state) => {
   if (!notesStatus) {
@@ -248,9 +267,10 @@
     noteAddButton.disabled = true;
   }
   try {
+    const authorProfile = getAuthorProfile();
     const response = await notebookFetch('/api/notebook-notes', {
       method: 'POST',
-      body: JSON.stringify({ text, category: currentCategory, author: getAuthorLabel() }),
+      body: JSON.stringify({ text, category: currentCategory, author: authorProfile.name }),
     });
     const data = await response.json();
     if (!response.ok) {
