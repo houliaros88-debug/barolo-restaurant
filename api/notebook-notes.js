@@ -61,7 +61,7 @@ const normalizeCategory = (value) => {
 };
 
 module.exports = async (req, res) => {
-  if (!['GET', 'POST', 'PATCH'].includes(req.method)) {
+  if (!['GET', 'POST', 'PATCH', 'DELETE'].includes(req.method)) {
     sendJson(res, 405, { error: 'Method not allowed.' });
     return;
   }
@@ -147,6 +147,41 @@ module.exports = async (req, res) => {
 
     const created = await createResponse.json();
     sendJson(res, 200, { note: created[0] });
+    return;
+  }
+
+  if (req.method === 'DELETE') {
+    const id = String(body?.id || '').trim();
+    if (!id) {
+      sendJson(res, 400, { error: 'Missing note id.' });
+      return;
+    }
+
+    const url = new URL(`${SUPABASE_URL}/rest/v1/notes`);
+    url.searchParams.set('id', `eq.${id}`);
+    url.searchParams.set('category', `eq.${category}`);
+
+    const response = await fetch(url.toString(), {
+      method: 'DELETE',
+      headers: {
+        apikey: SUPABASE_SERVICE_ROLE_KEY,
+        Authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+        Prefer: 'return=representation',
+      },
+    });
+
+    if (!response.ok) {
+      const message = await response.text();
+      sendJson(res, 500, { error: message || 'Failed to delete note.' });
+      return;
+    }
+
+    const removed = await response.json();
+    if (!removed.length) {
+      sendJson(res, 404, { error: 'Note not found.' });
+      return;
+    }
+    sendJson(res, 200, { note: removed[0] });
     return;
   }
 

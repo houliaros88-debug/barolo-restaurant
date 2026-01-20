@@ -24,6 +24,8 @@
   let isUnlocked = false;
   let currentAuthor = window.BAROLO_ADMIN_USER || '';
   let currentEmail = window.BAROLO_ADMIN_EMAIL || '';
+  let editingId = null;
+  let editingValue = '';
 
   document.addEventListener('admin:user', (event) => {
     currentAuthor = event?.detail?.label || '';
@@ -134,12 +136,18 @@
   });
   };
 
+  const resetEditingState = () => {
+  editingId = null;
+  editingValue = '';
+  };
+
   const setActiveCategory = (category, shouldLoad = true) => {
   const nextCategory = CATEGORIES.includes(category) ? category : 'barolo';
   if (nextCategory === currentCategory && shouldLoad) {
     return;
   }
   currentCategory = nextCategory;
+  resetEditingState();
   sessionStorage.setItem(CATEGORY_KEY, currentCategory);
   categoryButtons.forEach((button) => {
     const isActive = button.dataset.category === currentCategory;
@@ -168,7 +176,7 @@
     return;
   }
   notes.forEach((note) => {
-    const item = document.createElement('label');
+    const item = document.createElement('div');
     item.className = `admin-note${note.done ? ' done' : ''}`;
 
     const authorLabel = note.author || 'Team';
@@ -177,6 +185,8 @@
 
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
+    const checkboxId = `note-${note.id}`;
+    checkbox.id = checkboxId;
     checkbox.checked = Boolean(note.done);
     checkbox.addEventListener('change', () => {
       updateNote(note.id, checkbox.checked);
@@ -192,17 +202,114 @@
     author.className = 'admin-note-author';
     author.textContent = authorLabel;
 
-    const text = document.createElement('span');
-    text.className = 'admin-note-text';
-    text.textContent = note.text;
+    if (editingId === note.id) {
+      const editor = document.createElement('div');
+      editor.className = 'admin-note-editor';
 
-    meta.appendChild(author);
-    content.appendChild(meta);
-    content.appendChild(text);
+      const editorInput = document.createElement('textarea');
+      editorInput.className = 'admin-note-editor-input';
+      editorInput.value = editingValue;
+      editorInput.rows = 2;
+      editorInput.addEventListener('input', (event) => {
+        editingValue = event.target.value;
+      });
+
+      const editorActions = document.createElement('div');
+      editorActions.className = 'admin-note-editor-actions';
+
+      const saveButton = document.createElement('button');
+      saveButton.type = 'button';
+      saveButton.className = 'admin-note-action admin-note-save';
+      saveButton.textContent = 'Save';
+      saveButton.addEventListener('click', () => {
+        saveEditing(note.id);
+      });
+
+      const cancelButton = document.createElement('button');
+      cancelButton.type = 'button';
+      cancelButton.className = 'admin-note-action admin-note-cancel';
+      cancelButton.textContent = 'Cancel';
+      cancelButton.addEventListener('click', () => {
+        cancelEditing();
+      });
+
+      editorActions.appendChild(saveButton);
+      editorActions.appendChild(cancelButton);
+      editor.appendChild(editorInput);
+      editor.appendChild(editorActions);
+
+      meta.appendChild(author);
+      content.appendChild(meta);
+      content.appendChild(editor);
+    } else {
+      const actions = document.createElement('div');
+      actions.className = 'admin-note-actions';
+
+      const editButton = document.createElement('button');
+      editButton.type = 'button';
+      editButton.className = 'admin-note-action admin-note-edit';
+      editButton.textContent = 'Edit';
+      editButton.addEventListener('click', () => {
+        startEditing(note);
+      });
+
+      const deleteButton = document.createElement('button');
+      deleteButton.type = 'button';
+      deleteButton.className = 'admin-note-action admin-note-delete';
+      deleteButton.textContent = 'Delete';
+      deleteButton.addEventListener('click', () => {
+        deleteNote(note.id);
+      });
+
+      actions.appendChild(editButton);
+      actions.appendChild(deleteButton);
+      meta.appendChild(author);
+      meta.appendChild(actions);
+
+      const text = document.createElement('label');
+      text.className = 'admin-note-text';
+      text.setAttribute('for', checkboxId);
+      text.textContent = note.text;
+
+      content.appendChild(meta);
+      content.appendChild(text);
+    }
     item.appendChild(checkbox);
     item.appendChild(content);
     notesList.appendChild(item);
+
+    if (editingId === note.id) {
+      const focusTarget = item.querySelector('.admin-note-editor-input');
+      if (focusTarget) {
+        focusTarget.focus();
+        focusTarget.selectionStart = focusTarget.value.length;
+        focusTarget.selectionEnd = focusTarget.value.length;
+      }
+    }
   });
+  };
+
+  const startEditing = (note) => {
+  if (!note) {
+    return;
+  }
+  editingId = note.id;
+  editingValue = note.text || '';
+  renderNotes();
+  };
+
+  const cancelEditing = () => {
+  resetEditingState();
+  renderNotes();
+  };
+
+  const saveEditing = (id) => {
+  const text = String(editingValue || '').trim();
+  if (!text) {
+    setNotesStatus('Please enter a note.', 'error');
+    return;
+  }
+  updateNoteText(id, text);
   };
 
   const notebookFetch = async (path, options = {}) => {
@@ -244,6 +351,9 @@
       throw new Error(data.error || 'Failed to load notes.');
     }
     notes = Array.isArray(data.notes) ? data.notes : [];
+    if (editingId && !notes.some((note) => note.id === editingId)) {
+      resetEditingState();
+    }
     renderNotes();
     setNotesStatus('', '');
     hideGate();
@@ -340,6 +450,92 @@
   }
   };
 
+  const updateNoteText = async (id, text) => {
+    if (!isUnlocked) {
+      showGate('Enter the pass key to update notes.');
+      return;
+    }
+  const current = notes.find((note) => note.id === id);
+  if (current && current.text === text) {
+    resetEditingState();
+    renderNotes();
+    setNotesStatus('', '');
+    return;
+  }
+  const previousNotes = notes;
+  notes = notes.map((note) => (note.id === id ? { ...note, text } : note));
+  renderNotes();
+  setNotesStatus('Saving changes...', 'loading');
+  try {
+    const response = await notebookFetch('/api/notebook-notes', {
+      method: 'PATCH',
+      body: JSON.stringify({ id, text, category: currentCategory }),
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      if (response.status === 401) {
+        clearPasskey();
+        setNotesStatus('', '');
+        showGate(data.error || 'Invalid pass key.');
+        return;
+      }
+      throw new Error(data.error || 'Failed to update note.');
+    }
+    if (data.note) {
+      notes = notes.map((note) => (note.id === id ? data.note : note));
+    }
+    resetEditingState();
+    renderNotes();
+    setNotesStatus('', '');
+  } catch (error) {
+    notes = previousNotes;
+    renderNotes();
+    setNotesStatus(error.message || 'Failed to update note.', 'error');
+  }
+  };
+
+  const deleteNote = async (id) => {
+    if (!isUnlocked) {
+      showGate('Enter the pass key to delete notes.');
+      return;
+    }
+  const target = notes.find((note) => note.id === id);
+  if (!target) {
+    return;
+  }
+  if (!window.confirm('Delete this note?')) {
+    return;
+  }
+  const previousNotes = notes;
+  notes = notes.filter((note) => note.id !== id);
+  if (editingId === id) {
+    resetEditingState();
+  }
+  renderNotes();
+  setNotesStatus('Deleting note...', 'loading');
+  try {
+    const response = await notebookFetch('/api/notebook-notes', {
+      method: 'DELETE',
+      body: JSON.stringify({ id, category: currentCategory }),
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      if (response.status === 401) {
+        clearPasskey();
+        setNotesStatus('', '');
+        showGate(data.error || 'Invalid pass key.');
+        return;
+      }
+      throw new Error(data.error || 'Failed to delete note.');
+    }
+    setNotesStatus('', '');
+  } catch (error) {
+    notes = previousNotes;
+    renderNotes();
+    setNotesStatus(error.message || 'Failed to delete note.', 'error');
+  }
+  };
+
   const submitPasskey = async () => {
   if (!passkeyInput) {
     return;
@@ -427,6 +623,7 @@
       return;
     }
     isUnlocked = false;
+    resetEditingState();
     showGate('Enter the pass key to unlock notes.');
   };
 

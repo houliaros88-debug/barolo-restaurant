@@ -1041,6 +1041,10 @@ body.nav-open .nav-links {
 }
 
 .admin-note-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.12em;
@@ -1050,6 +1054,69 @@ body.nav-open .nav-links {
 .admin-note-author {
   color: var(--note-color, var(--ink));
   font-weight: 600;
+}
+
+.admin-note-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-note-action {
+  border: none;
+  background: none;
+  padding: 0;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--ink);
+  cursor: pointer;
+  opacity: 0.8;
+}
+
+.admin-note-action:hover {
+  opacity: 1;
+}
+
+.admin-note-action:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.admin-note-delete {
+  color: #9c2f2f;
+}
+
+.admin-note-editor {
+  display: grid;
+  gap: 8px;
+}
+
+.admin-note-editor-input {
+  width: 100%;
+  min-height: 56px;
+  border-radius: 12px;
+  border: 1px solid rgba(47, 34, 29, 0.18);
+  padding: 8px 10px;
+  font-size: 14px;
+  font-family: inherit;
+  background: #fff;
+  resize: vertical;
+}
+
+.admin-note-editor-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.admin-note-editor-actions .admin-note-action {
+  border-radius: 999px;
+  border: 1px solid rgba(47, 34, 29, 0.2);
+  padding: 6px 12px;
+  font-size: 10px;
+  background: #fff;
 }
 
 .admin-note.done {
