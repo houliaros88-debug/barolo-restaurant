@@ -108,18 +108,24 @@ const setStatus = (message, state) => {
 };
 
 const setAdminUser = (label) => {
+  cachedUserLabel = label || null;
+  if (label) {
+    window.BAROLO_ADMIN_USER = label;
+    document.dispatchEvent(new CustomEvent('admin:user', { detail: { label } }));
+  } else {
+    delete window.BAROLO_ADMIN_USER;
+    document.dispatchEvent(new CustomEvent('admin:user', { detail: { label: null } }));
+  }
   if (!adminUser) {
     return;
   }
   if (!label) {
     adminUser.textContent = '';
     adminUser.hidden = true;
-    cachedUserLabel = null;
     return;
   }
   adminUser.textContent = `Signed in as ${label}`;
   adminUser.hidden = false;
-  cachedUserLabel = label;
 };
 
 const setAuthStatus = (message, state) => {

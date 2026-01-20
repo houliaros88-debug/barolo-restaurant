@@ -1028,10 +1028,28 @@ body.nav-open .nav-links {
   border-radius: 12px;
   border: 1px solid rgba(47, 34, 29, 0.12);
   background: #fff;
+  border-left: 4px solid var(--note-color, rgba(47, 34, 29, 0.2));
 }
 
 .admin-note input {
   margin-top: 2px;
+}
+
+.admin-note-content {
+  display: grid;
+  gap: 4px;
+}
+
+.admin-note-meta {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  opacity: 0.7;
+}
+
+.admin-note-author {
+  color: var(--note-color, var(--ink));
+  font-weight: 600;
 }
 
 .admin-note.done {

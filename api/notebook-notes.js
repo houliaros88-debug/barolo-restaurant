@@ -119,11 +119,13 @@ module.exports = async (req, res) => {
       sendJson(res, 400, { error: 'Note text is required.' });
       return;
     }
+    const author = String(body?.author || '').trim() || 'Team';
 
     const payload = {
       text,
       done: false,
       category,
+      author,
     };
 
     const createResponse = await fetch(`${SUPABASE_URL}/rest/v1/notes`, {

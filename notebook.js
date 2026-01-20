@@ -22,6 +22,29 @@
   let notes = [];
   let currentCategory = CATEGORIES.includes(savedCategory) ? savedCategory : 'barolo';
   let isUnlocked = false;
+  let currentAuthor = window.BAROLO_ADMIN_USER || '';
+
+  document.addEventListener('admin:user', (event) => {
+    currentAuthor = event?.detail?.label || '';
+  });
+
+  const NOTE_COLORS = ['#a23a2c', '#8a6b52', '#4f6f5f', '#3b6a8c', '#c27a3c', '#7a5c8c'];
+
+  const hashString = (value) => {
+    let hash = 0;
+    for (let i = 0; i < value.length; i += 1) {
+      hash = (hash << 5) - hash + value.charCodeAt(i);
+      hash |= 0;
+    }
+    return Math.abs(hash);
+  };
+
+  const getAuthorLabel = () => currentAuthor || 'Team';
+
+  const getAuthorColor = (label) => {
+    const safeLabel = String(label || 'Team');
+    return NOTE_COLORS[hashString(safeLabel) % NOTE_COLORS.length];
+  };
 
   const setNotesStatus = (message, state) => {
   if (!notesStatus) {
@@ -126,6 +149,10 @@
     const item = document.createElement('label');
     item.className = `admin-note${note.done ? ' done' : ''}`;
 
+    const authorLabel = note.author || 'Team';
+    const noteColor = getAuthorColor(authorLabel);
+    item.style.setProperty('--note-color', noteColor);
+
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
     checkbox.checked = Boolean(note.done);
@@ -133,12 +160,25 @@
       updateNote(note.id, checkbox.checked);
     });
 
+    const content = document.createElement('div');
+    content.className = 'admin-note-content';
+
+    const meta = document.createElement('div');
+    meta.className = 'admin-note-meta';
+
+    const author = document.createElement('span');
+    author.className = 'admin-note-author';
+    author.textContent = authorLabel;
+
     const text = document.createElement('span');
     text.className = 'admin-note-text';
     text.textContent = note.text;
 
+    meta.appendChild(author);
+    content.appendChild(meta);
+    content.appendChild(text);
     item.appendChild(checkbox);
-    item.appendChild(text);
+    item.appendChild(content);
     notesList.appendChild(item);
   });
   };
@@ -210,7 +250,7 @@
   try {
     const response = await notebookFetch('/api/notebook-notes', {
       method: 'POST',
-      body: JSON.stringify({ text, category: currentCategory }),
+      body: JSON.stringify({ text, category: currentCategory, author: getAuthorLabel() }),
     });
     const data = await response.json();
     if (!response.ok) {
