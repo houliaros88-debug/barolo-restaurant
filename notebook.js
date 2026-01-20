@@ -1,54 +1,57 @@
-const notesList = document.querySelector('#notes-list');
-const notesStatus = document.querySelector('#notes-status');
-const noteInput = document.querySelector('#note-input');
-const noteAddButton = document.querySelector('#note-add');
-const categoryButtons = document.querySelectorAll('[data-category]');
-const passkeyInput = document.querySelector('#notebook-passkey');
-const unlockButton = document.querySelector('#notebook-unlock');
-const gateStatus = document.querySelector('#notebook-gate-status');
-const gate = document.querySelector('#notebook-gate');
-const notesContent = document.querySelector('#notebook-content');
-const notesPanel = document.querySelector('[data-admin-panel="notes"]');
+(() => {
+  'use strict';
 
-const PASSKEY_KEY = 'barolo-notebook-passkey';
-const PASSKEY_COOKIE = 'barolo_notebook_passkey';
-const CATEGORY_KEY = 'barolo-notebook-category';
-const CATEGORIES = ['barolo', 'harem'];
-const savedCategory = sessionStorage.getItem(CATEGORY_KEY);
+  const notesList = document.querySelector('#notes-list');
+  const notesStatus = document.querySelector('#notes-status');
+  const noteInput = document.querySelector('#note-input');
+  const noteAddButton = document.querySelector('#note-add');
+  const categoryButtons = document.querySelectorAll('[data-category]');
+  const passkeyInput = document.querySelector('#notebook-passkey');
+  const unlockButton = document.querySelector('#notebook-unlock');
+  const gateStatus = document.querySelector('#notebook-gate-status');
+  const gate = document.querySelector('#notebook-gate');
+  const notesContent = document.querySelector('#notebook-content');
+  const notesPanel = document.querySelector('[data-admin-panel="notes"]');
 
-let notes = [];
-let currentCategory = CATEGORIES.includes(savedCategory) ? savedCategory : 'barolo';
+  const PASSKEY_KEY = 'barolo-notebook-passkey';
+  const PASSKEY_COOKIE = 'barolo_notebook_passkey';
+  const CATEGORY_KEY = 'barolo-notebook-category';
+  const CATEGORIES = ['barolo', 'harem'];
+  const savedCategory = sessionStorage.getItem(CATEGORY_KEY);
 
-const setNotesStatus = (message, state) => {
+  let notes = [];
+  let currentCategory = CATEGORIES.includes(savedCategory) ? savedCategory : 'barolo';
+
+  const setNotesStatus = (message, state) => {
   if (!notesStatus) {
     return;
   }
   notesStatus.textContent = message;
   notesStatus.dataset.state = state || '';
-};
+  };
 
-const setGateStatus = (message, state) => {
+  const setGateStatus = (message, state) => {
   if (!gateStatus) {
     return;
   }
   gateStatus.textContent = message;
   gateStatus.dataset.state = state || '';
-};
+  };
 
-const readCookie = (name) => {
+  const readCookie = (name) => {
   const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const match = document.cookie.match(new RegExp(`(?:^|; )${escaped}=([^;]*)`));
   return match ? decodeURIComponent(match[1]) : '';
-};
+  };
 
-const getPasskey = () => sessionStorage.getItem(PASSKEY_KEY) || readCookie(PASSKEY_COOKIE);
+  const getPasskey = () => sessionStorage.getItem(PASSKEY_KEY) || readCookie(PASSKEY_COOKIE);
 
-const clearPasskey = () => {
+  const clearPasskey = () => {
   sessionStorage.removeItem(PASSKEY_KEY);
   document.cookie = `${PASSKEY_COOKIE}=; Max-Age=0; path=/; SameSite=Lax`;
-};
+  };
 
-const showGate = (message) => {
+  const showGate = (message) => {
   if (gate) {
     gate.hidden = false;
   }
@@ -59,9 +62,9 @@ const showGate = (message) => {
   if (message) {
     setGateStatus(message, 'error');
   }
-};
+  };
 
-const hideGate = () => {
+  const hideGate = () => {
   if (gate) {
     gate.hidden = true;
   }
@@ -69,9 +72,9 @@ const hideGate = () => {
     notesContent.hidden = false;
   }
   setGateStatus('', '');
-};
+  };
 
-const setNotebookEnabled = (isEnabled) => {
+  const setNotebookEnabled = (isEnabled) => {
   if (noteInput) {
     noteInput.disabled = !isEnabled;
   }
@@ -81,9 +84,9 @@ const setNotebookEnabled = (isEnabled) => {
   categoryButtons.forEach((button) => {
     button.disabled = !isEnabled;
   });
-};
+  };
 
-const setActiveCategory = (category, shouldLoad = true) => {
+  const setActiveCategory = (category, shouldLoad = true) => {
   const nextCategory = CATEGORIES.includes(category) ? category : 'barolo';
   if (nextCategory === currentCategory && shouldLoad) {
     return;
@@ -102,9 +105,9 @@ const setActiveCategory = (category, shouldLoad = true) => {
     }
     loadNotes();
   }
-};
+  };
 
-const renderNotes = () => {
+  const renderNotes = () => {
   if (!notesList) {
     return;
   }
@@ -135,9 +138,9 @@ const renderNotes = () => {
     item.appendChild(text);
     notesList.appendChild(item);
   });
-};
+  };
 
-const notebookFetch = async (path, options = {}) => {
+  const notebookFetch = async (path, options = {}) => {
   const passkey = getPasskey();
   const headers = {
     ...(options.headers || {}),
@@ -149,9 +152,9 @@ const notebookFetch = async (path, options = {}) => {
     headers['x-notebook-passkey'] = passkey;
   }
   return fetch(path, { ...options, headers, credentials: 'same-origin' });
-};
+  };
 
-const loadNotes = async () => {
+  const loadNotes = async () => {
   if (!notesList) {
     return;
   }
@@ -182,9 +185,9 @@ const loadNotes = async () => {
   } catch (error) {
     setNotesStatus(error.message || 'Failed to load notes.', 'error');
   }
-};
+  };
 
-const addNote = async () => {
+  const addNote = async () => {
   if (!noteInput) {
     return;
   }
@@ -232,9 +235,9 @@ const addNote = async () => {
       noteAddButton.disabled = false;
     }
   }
-};
+  };
 
-const updateNote = async (id, done) => {
+  const updateNote = async (id, done) => {
   if (!getPasskey()) {
     showGate('Enter the pass key to update notes.');
     return;
@@ -269,9 +272,9 @@ const updateNote = async (id, done) => {
     }
     setNotesStatus(error.message || 'Failed to update note.', 'error');
   }
-};
+  };
 
-const submitPasskey = async () => {
+  const submitPasskey = async () => {
   if (!passkeyInput) {
     return;
   }
@@ -313,63 +316,64 @@ const submitPasskey = async () => {
       unlockButton.disabled = false;
     }
   }
-};
+  };
 
-if (noteAddButton) {
-  noteAddButton.addEventListener('click', addNote);
-}
+  if (noteAddButton) {
+    noteAddButton.addEventListener('click', addNote);
+  }
 
-if (noteInput) {
-  noteInput.addEventListener('keydown', (event) => {
-    if (event.key === 'Enter') {
-      event.preventDefault();
-      addNote();
-    }
+  if (noteInput) {
+    noteInput.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        addNote();
+      }
+    });
+  }
+
+  if (passkeyInput) {
+    passkeyInput.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        submitPasskey();
+      }
+    });
+  }
+
+  if (unlockButton) {
+    unlockButton.addEventListener('click', submitPasskey);
+  }
+
+  categoryButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      if (!getPasskey()) {
+        showGate('Enter the pass key to switch categories.');
+        return;
+      }
+      setActiveCategory(button.dataset.category);
+    });
   });
-}
 
-if (passkeyInput) {
-  passkeyInput.addEventListener('keydown', (event) => {
-    if (event.key === 'Enter') {
-      event.preventDefault();
-      submitPasskey();
-    }
-  });
-}
+  setActiveCategory(currentCategory, false);
 
-if (unlockButton) {
-  unlockButton.addEventListener('click', submitPasskey);
-}
-
-categoryButtons.forEach((button) => {
-  button.addEventListener('click', () => {
-    if (!getPasskey()) {
-      showGate('Enter the pass key to switch categories.');
+  const handleNotesTab = () => {
+    if (!notesPanel || notesPanel.hidden) {
       return;
     }
-    setActiveCategory(button.dataset.category);
+    if (getPasskey()) {
+      setNotebookEnabled(true);
+      hideGate();
+      loadNotes();
+    } else {
+      showGate('Enter the pass key to unlock notes.');
+    }
+  };
+
+  document.addEventListener('admin:tab', (event) => {
+    if (event?.detail?.tab === 'notes') {
+      handleNotesTab();
+    }
   });
-});
 
-setActiveCategory(currentCategory, false);
-
-const handleNotesTab = () => {
-  if (!notesPanel || notesPanel.hidden) {
-    return;
-  }
-  if (getPasskey()) {
-    setNotebookEnabled(true);
-    hideGate();
-    loadNotes();
-  } else {
-    showGate('Enter the pass key to unlock notes.');
-  }
-};
-
-document.addEventListener('admin:tab', (event) => {
-  if (event?.detail?.tab === 'notes') {
-    handleNotesTab();
-  }
-});
-
-handleNotesTab();
+  handleNotesTab();
+})();
